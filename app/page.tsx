@@ -1,9 +1,18 @@
 "use client"
 import useChat from "@/lib/usechat";
 import styles from "./page.module.css"
-import { useEffect } from "react";
+import { MouseEvent as RME, useEffect } from "react";
 
 export default function Home() {
+  function onBtnClick(e: RME<HTMLButtonElement, MouseEvent>) {
+    const node = e.currentTarget.parentElement?.firstChild
+    if (node) {
+      const input = node as HTMLInputElement
+      console.log("onBtnClick sending msg: " + input.value)
+      sendMsg(input.value)
+    }
+  }
+
   const [messages, sendMsg, isConnected, transport] = useChat()
 
   console.log("Home")
@@ -12,12 +21,18 @@ export default function Home() {
     console.log("useEffect")
     sendMsg("Hello from Home!")
   }, [])
-  
-  return (
+
+  return (<>
     <div className={styles.page}>
-      {messages.map((m, i) =>
-        <div key={i}>{m}</div>
-      )}
+      <input type="text" />
+      <button onClick={(e) => onBtnClick(e)}>Skicka</button>
+      <span>Connected:</span>
+      <span>{isConnected}</span>
+      <span>Transport:</span><span>{transport}</span>
     </div>
-  );
+    <hr />
+    {messages.map((m, i) =>
+      <div key={i}>{m}</div>
+    )}
+  </>);
 }

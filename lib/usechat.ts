@@ -12,7 +12,7 @@ export default function useChat(): [string[], (m: string) => void, boolean, stri
         ws.send(m)
     }
     function onConnect() {
-        console.log("onConnect")
+        console.log("onConnect: ", ws)
         setIsConnected(true)
         if (ws) {
             setTransport(ws.io.engine.transport.name)
@@ -28,7 +28,7 @@ export default function useChat(): [string[], (m: string) => void, boolean, stri
         setTransport("N/A")
     }
 
-    const [ws, setWS] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null)
+    const [ws, setWS] = useState<Socket | null>(null)
     const [isConnected, setIsConnected] = useState(false)
     const [transport, setTransport] = useState("N/A")
     const [messages, setMessages] = useState<string[]>([])
@@ -36,22 +36,22 @@ export default function useChat(): [string[], (m: string) => void, boolean, stri
     useEffect(() => {
         const s = io("ws://localhost:8080")
         console.log("useEffect - socket: ", s);
-        setWS(s)
-        if (ws) {
-            ws.on("connect", onConnect)
-            ws.on("disconnect", onDisconnect)
-            ws.on("message", (ev) => {
-                console.log("Received message from server: ", ev)
+        if (s) {
+            s.on("connect", onConnect)
+            s.on("disconnect", onDisconnect)
+            s.on("message", (e) => {
+                console.log("Received message from server: ", e)
                 //setMessages([...messages, ev.data as string])
             })
         }
+        setWS(s)
 
         return () => {
             console.log("useEffect cleanup")
-            if (ws) {
-                ws.off("connect", onConnect)
-                ws.off("disconnect", onDisconnect)
-                ws.off("message", onDisconnect)
+            if (s) {
+                s.off("connect", onConnect)
+                s.off("disconnect", onDisconnect)
+                s.off("message", onDisconnect)
             }
         };
     }, [])
