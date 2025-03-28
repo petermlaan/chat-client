@@ -34,7 +34,7 @@ export default function useChat(username: string): [string[], (m: string) => voi
         if (s) {
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
-            s.on("message", e => setMessages(prev => [...prev, e]))
+            s.on("message", e => setMessages(prev => [e, ...prev]))
         }
     }, [])
 

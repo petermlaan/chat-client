@@ -25,9 +25,11 @@ export default function PageC() {
                 <span>Transport:</span><span>{transport}</span>
             </div>
             <hr />
-            {messages.map((m, i) =>
-                <div className={styles.msg} key={i}>{m}</div>
-            )}
+            <div className={styles.msgs}>
+                {messages.map((m, i) =>
+                    <div className={styles.msg} key={i}>{m}</div>
+                )}
+            </div>
         </main>
     );
 }

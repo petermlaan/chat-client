@@ -1,7 +1,7 @@
 .main {
   font-family: var(--font-geist-sans);
   font-size: large;
-  margin: 0 0 0 1rem;
+  margin: 0 1rem;
 
   button, input {
     font-size: large;
@@ -18,4 +18,14 @@
 
 .msg {
   padding: 0.4rem;
+}
+
+.msgs {
+  display: flex;
+  flex-direction: column-reverse;
+  flex-wrap: nowrap;
+  border: 1px solid;
+  height: 20rem;
+  overflow-y: auto; /* scroll = alltid på */
+  
 }
