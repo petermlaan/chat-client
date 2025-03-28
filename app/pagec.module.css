@@ -1,14 +1,8 @@
 .main {
-  font-family: var(--font-geist-sans);
-  font-size: large;
   margin: 0 1rem;
-
-  button, input {
-    font-size: large;
-  }
 }
 
-.page {
+.top {
   display: grid;
   grid-template-columns: max-content max-content;
   align-items: center;

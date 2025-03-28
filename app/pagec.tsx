@@ -29,9 +29,9 @@ export default function PageC() {
         const node = e.currentTarget.parentElement?.childNodes[2]
         if (node) {
             const input = node as HTMLInputElement
-            const delay = 1000*+input.value
+            const delay = 1000 * +input.value
             window.setInterval(() => {
-                const m = spam[Math.floor(Math.random()*9.999)]
+                const m = spam[Math.floor(Math.random() * 9.999)]
                 sendMsg(m)
             }, delay)
         }
@@ -41,7 +41,7 @@ export default function PageC() {
 
     return (
         <main className={styles.main}>
-            <div className={styles.page}>
+            <div className={styles.top}>
                 <input type="text" />
                 <button onClick={(e) => onBtnClick(e)}>Skicka</button>
                 <input type="text" defaultValue="2" />
