@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client";
+import SuperJSON from "superjson";
 
-export default function useChat(username: string): [string[], (m: string) => void, boolean, string] {
-    function sendMsg(m: string) {
+export interface Msg {
+    user: string;
+    msg: string;
+    date: Date;
+}
+
+export default function useChat(username: string): [Msg[], (m: string) => void, boolean, string] {
+    function sendMsg(msg: string) {
         if (!socket || !socket.connected) {
             console.log("useChat: trying to send msg on null or closed socket", socket)
             return
         }
-        socket.emit("message", m)
+        socket.emit("message", msg)
     }
 
     const [socket, setSocket] = useState<Socket | null>(null)
     const [isConnected, setIsConnected] = useState(false)
     const [transport, setTransport] = useState("N/A")
-    const [messages, setMessages] = useState<string[]>([])
+    const [messages, setMessages] = useState<Msg[]>([])
 
     useEffect(() => {
         function onConnect() {
@@ -34,7 +41,7 @@ export default function useChat(username: string): [string[], (m: string) => voi
         if (s) {
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
-            s.on("message", e => setMessages(prev => [e, ...prev]))
+            s.on("message", e => setMessages(prev => [SuperJSON.parse(e), ...prev]))
         }
     }, [])
 
