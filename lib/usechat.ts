@@ -4,7 +4,7 @@ import { io, Socket } from "socket.io-client";
 export default function useChat(username: string): [string[], (m: string) => void, boolean, string] {
     function sendMsg(m: string) {
         if (!socket || !socket.connected) {
-            console.log("useChat: trying to send msg on null or closed ws", socket)
+            console.log("useChat: trying to send msg on null or closed socket", socket)
             return
         }
         socket.emit("message", m)
