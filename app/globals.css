@@ -34,7 +34,11 @@ a {
   color: inherit;
   text-decoration: none;
 
-  &hoover {
+  &hover {
     cursor: pointer;
   }
+}
+
+.logo {
+  padding: 1rem;
 }

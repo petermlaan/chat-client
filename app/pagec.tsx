@@ -16,7 +16,7 @@ export default function PageC() {
     const [messages, sendMsg, isConnected, transport] = useChat("User" + (100 * Math.random()).toFixed(0))
 
     return (
-        <main>
+        <main className={styles.main}>
             <div className={styles.page}>
                 <input type="text" />
                 <button onClick={(e) => onBtnClick(e)}>Skicka</button>
@@ -26,7 +26,7 @@ export default function PageC() {
             </div>
             <hr />
             {messages.map((m, i) =>
-                <div key={i}>{m}</div>
+                <div className={styles.msg} key={i}>{m}</div>
             )}
         </main>
     );

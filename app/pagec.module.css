@@ -1,31 +1,21 @@
-.page {
-  --gray-rgb: 0, 0, 0;
-  --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
-  --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
-  --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-
-  display: grid;
-  grid-template-columns: max-content max-content;
-  align-items: center;
-  gap: 1rem;
+.main {
   font-family: var(--font-geist-sans);
   font-size: large;
-  margin: 2rem 0 0 2rem;
+  margin: 0 0 0 1rem;
 
   button, input {
     font-size: large;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .page {
-    --gray-rgb: 255, 255, 255;
-    --gray-alpha-200: rgba(var(--gray-rgb), 0.145);
-    --gray-alpha-100: rgba(var(--gray-rgb), 0.06);
+.page {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  align-items: center;
+  gap: 0.2rem;
+  padding-bottom: 0.4rem;
+}
 
-    --button-primary-hover: #ccc;
-    --button-secondary-hover: #1a1a1a;
-  }
+.msg {
+  padding: 0.4rem;
 }
