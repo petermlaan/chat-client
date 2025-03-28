@@ -1,0 +1,5 @@
+.page {
+  display: flex;
+  gap: 0.2rem;
+  border: 1px solid;
+}
