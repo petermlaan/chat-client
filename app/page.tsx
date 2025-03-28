@@ -13,7 +13,7 @@ export default function Home() {
     }
   }
 
-  const [messages, sendMsg, isConnected, transport] = useChat()
+  const [messages, sendMsg, isConnected, transport] = useChat("User" + (100*Math.random()).toFixed(0))
 
   return (<>
     <div className={styles.page}>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client";
 
-export default function useChat(): [string[], (m: string) => void, boolean, string] {
+export default function useChat(username: string): [string[], (m: string) => void, boolean, string] {
     function sendMsg(m: string) {
         if (!socket || !socket.connected) {
             console.log("useChat: trying to send msg on null or closed ws", socket)
@@ -29,7 +29,7 @@ export default function useChat(): [string[], (m: string) => void, boolean, stri
             setTransport("N/A")
         }
 
-        const s = io("ws://localhost:8080")
+        const s = io("ws://localhost:8080", {auth: {token: username}})
         setSocket(s)
         if (s) {
             s.on("connect", onConnect)
