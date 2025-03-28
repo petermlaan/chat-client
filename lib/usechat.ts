@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react"
-import { io, Socket } from "socket.io-client";
-import SuperJSON from "superjson";
-
-export interface Msg {
-    user: string;
-    msg: string;
-    date: Date;
-}
+import { io, Socket } from "socket.io-client"
+import { Msg } from "../../common/interfaces"
 
 export default function useChat(username: string): [Msg[], (m: string) => void, boolean, string] {
     function sendMsg(msg: string) {
@@ -41,7 +35,9 @@ export default function useChat(username: string): [Msg[], (m: string) => void, 
         if (s) {
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
-            s.on("message", e => setMessages(prev => [SuperJSON.parse(e), ...prev]))
+            s.on("message", e => {
+                setMessages(prev => [JSON.parse(e), ...prev])
+            })
         }
     }, [])
 

@@ -27,7 +27,7 @@ export default function PageC() {
             <hr />
             <div className={styles.msgs}>
                 {messages.map((m, i) =>
-                    <div className={styles.msg} key={i}>{`${m.date.getHours()}:${m.date.getMinutes()}:${m.date.getSeconds()} ${m.user}: ${m.msg}`}</div>
+                    <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
                 )}
             </div>
         </main>
