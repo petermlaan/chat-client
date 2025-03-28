@@ -3,6 +3,19 @@ import useChat from "@/lib/usechat";
 import styles from "./pagec.module.css"
 import { MouseEvent as RME } from "react";
 
+const spam = [
+    "SPAM!!!",
+    "hello?",
+    "RTFM!!!",
+    "lolwut?",
+    "i will never... 😄😄😄😄😄😄😄",
+    "why not?",
+    "Please stop!🤣🤣🤣",
+    "Am I sentient?😀",
+    "NOOOOOOO!!!!!!!! :(",
+    "sure?",
+]
+
 export default function PageC() {
     function onBtnClick(e: RME<HTMLButtonElement, MouseEvent>) {
         const node = e.currentTarget.parentElement?.firstChild
@@ -10,6 +23,17 @@ export default function PageC() {
             const input = node as HTMLInputElement
             sendMsg(input.value)
             input.value = ""
+        }
+    }
+    function onBtnSpam(e: RME<HTMLButtonElement, MouseEvent>) {
+        const node = e.currentTarget.parentElement?.childNodes[2]
+        if (node) {
+            const input = node as HTMLInputElement
+            const delay = 1000*+input.value
+            window.setInterval(() => {
+                const m = spam[Math.floor(Math.random()*9.999)]
+                sendMsg(m)
+            }, delay)
         }
     }
 
@@ -20,8 +44,9 @@ export default function PageC() {
             <div className={styles.page}>
                 <input type="text" />
                 <button onClick={(e) => onBtnClick(e)}>Skicka</button>
-                <span>Connected:</span>
-                <span>{isConnected + ""}</span>
+                <input type="text" defaultValue="2" />
+                <button onClick={(e) => onBtnSpam(e)}>Spam!</button>
+                <span>Connected:</span><span>{isConnected + ""}</span>
                 <span>Transport:</span><span>{transport}</span>
             </div>
             <hr />
