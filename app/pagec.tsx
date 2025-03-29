@@ -37,7 +37,7 @@ export default function PageC() {
         }
     }
 
-    const [messages, sendMsg, isConnected, transport] = useChat("User" + rnd(99), rnd(2))
+    const [messages, sendMsg, isConnected, transport, room, user] = useChat("User" + rnd(99), rnd(2))
 
     return (
         <main className={styles.main}>
@@ -45,9 +45,11 @@ export default function PageC() {
                 <input type="text" id="msg" />
                 <button onClick={onBtnClick}>Skicka</button>
                 <span>Connected:</span><span>{isConnected + ""}</span>
+                <span>Room:</span><span>{room}</span>
                 <input type="text" id="delay" defaultValue="2" />
                 <button onClick={onBtnSpam}>Spam!</button>
                 <span>Transport:</span><span>{transport}</span>
+                <span>User:</span><span>{user}</span>
             </div>
             <hr />
             <div className={styles.msgs}>

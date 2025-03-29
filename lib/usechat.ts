@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
-import { Msg } from "../../common/interfaces"
+import { Msg } from "./interfaces"
 
-export default function useChat(username: string, room: number): [Msg[], (m: string) => void, boolean, string] {
+export default function useChat(username: string, roomNo: number): 
+    [Msg[], (m: string) => void, boolean, string, number, string] {
     function sendMsg(msg: string) {
         if (!socket || !socket.connected) {
             console.log("useChat: trying to send msg on null or closed socket", socket)
@@ -15,6 +16,8 @@ export default function useChat(username: string, room: number): [Msg[], (m: str
     const [isConnected, setIsConnected] = useState(false)
     const [transport, setTransport] = useState("N/A")
     const [messages, setMessages] = useState<Msg[]>([])
+    const [room, setRoom] = useState(roomNo)
+    const [user, setUser] = useState(username)
 
     useEffect(() => {
         function onConnect() {
@@ -30,6 +33,8 @@ export default function useChat(username: string, room: number): [Msg[], (m: str
             setTransport("N/A")
         }
 
+        setRoom(roomNo)
+        setUser(username)
         const s = io("ws://localhost:808" + room, {auth: {token: username}})
         setSocket(s)
         if (s) {
@@ -41,5 +46,5 @@ export default function useChat(username: string, room: number): [Msg[], (m: str
         }
     }, [])
 
-    return [messages, sendMsg, isConnected, transport]
+    return [messages, sendMsg, isConnected, transport, room, user]
 }
