@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState } from 'react';
-import { Msg } from '@/lib/interfaces';
 import { io, Socket } from 'socket.io-client';
+import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 
 interface ChatContextType {
@@ -43,7 +43,7 @@ export function ChatProvider({
 
         if (socket && isConnected)
             socket.disconnect()
-        
+
         const s = io("ws://localhost:808" + roomNo, { auth: { token: user } })
         setRoom(roomNo)
         setSocket(s)
