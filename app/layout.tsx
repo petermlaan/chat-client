@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
 import "./globals.css";
+
+const luxuriousRoman = Luxurious_Roman({
+  weight: "400",
+  variable: "--font-luxurious-roman",
+  subsets: ["latin"],
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
         <h1 className="logo">Chaticus Maximus</h1>
         <hr />
         {children}
