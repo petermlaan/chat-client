@@ -1,7 +1,6 @@
 "use client"
-import useChat from "@/lib/usechat";
 import styles from "./pagec.module.css"
-import { rnd } from "@/lib/util";
+import { useChatContext } from "./chatcontext";
 
 const spam = [
     "SPAM!!!",
@@ -21,7 +20,7 @@ export default function PageC() {
         const node = document.querySelector("#msg")
         if (node) {
             const input = node as HTMLInputElement
-            sendMsg(input.value)
+            cc.sendMsg(input.value)
             input.value = ""
         }
     }
@@ -32,28 +31,28 @@ export default function PageC() {
             const delay = 1000 * +input.value
             window.setInterval(() => {
                 const m = spam[Math.floor(Math.random() * 9.999)]
-                sendMsg(m)
+                cc.sendMsg(m)
             }, delay)
         }
     }
 
-    const [messages, sendMsg, isConnected, transport, room, user] = useChat("User" + rnd(99), rnd(2))
+    const cc = useChatContext()
 
     return (
         <main className={styles.main}>
             <div className={styles.top}>
                 <input type="text" id="msg" />
                 <button onClick={onBtnClick}>Skicka</button>
-                <span>Connected:</span><span>{isConnected + ""}</span>
-                <span>Room:</span><span>{room}</span>
+                <span>Connected:</span><span>{cc.isConnected + ""}</span>
+                <span>Room:</span><span>{cc.room}</span>
                 <input type="text" id="delay" defaultValue="2" />
                 <button onClick={onBtnSpam}>Spam!</button>
-                <span>Transport:</span><span>{transport}</span>
-                <span>User:</span><span>{user}</span>
+                <span>Transport:</span><span>{cc.transport}</span>
+                <span>User:</span><span>{cc.user}</span>
             </div>
             <hr />
             <div className={styles.msgs}>
-                {messages.map((m, i) =>
+                {cc.messages.map((m, i) =>
                     <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
                 )}
             </div>
