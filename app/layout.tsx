@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
 import "./globals.css";
 import { ChatProvider } from "./chatcontext";
+import EditLayout from "./editlayout";
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -33,8 +34,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
         <h1 className="logo">Chaticus Maximus</h1>
-        <hr />
         <ChatProvider>
+          <EditLayout />
+          <hr />
           {children}
         </ChatProvider>
       </body>
