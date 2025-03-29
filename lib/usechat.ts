@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { io, Socket } from "socket.io-client"
 import { Msg } from "../../common/interfaces"
 
-export default function useChat(username: string): [Msg[], (m: string) => void, boolean, string] {
+export default function useChat(username: string, room: number): [Msg[], (m: string) => void, boolean, string] {
     function sendMsg(msg: string) {
         if (!socket || !socket.connected) {
             console.log("useChat: trying to send msg on null or closed socket", socket)
@@ -30,7 +30,7 @@ export default function useChat(username: string): [Msg[], (m: string) => void, 
             setTransport("N/A")
         }
 
-        const s = io("ws://localhost:8080", {auth: {token: username}})
+        const s = io("ws://localhost:808" + room, {auth: {token: username}})
         setSocket(s)
         if (s) {
             s.on("connect", onConnect)

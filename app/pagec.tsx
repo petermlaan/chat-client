@@ -1,7 +1,7 @@
 "use client"
 import useChat from "@/lib/usechat";
 import styles from "./pagec.module.css"
-import { MouseEvent as RME } from "react";
+import { rnd } from "@/lib/util";
 
 const spam = [
     "SPAM!!!",
@@ -17,16 +17,16 @@ const spam = [
 ]
 
 export default function PageC() {
-    function onBtnClick(e: RME<HTMLButtonElement, MouseEvent>) {
-        const node = e.currentTarget.parentElement?.firstChild
+    function onBtnClick() {
+        const node = document.querySelector("#msg")
         if (node) {
             const input = node as HTMLInputElement
             sendMsg(input.value)
             input.value = ""
         }
     }
-    function onBtnSpam(e: RME<HTMLButtonElement, MouseEvent>) {
-        const node = e.currentTarget.parentElement?.childNodes[2]
+    function onBtnSpam() {
+        const node = document.querySelector("#delay")
         if (node) {
             const input = node as HTMLInputElement
             const delay = 1000 * +input.value
@@ -37,16 +37,16 @@ export default function PageC() {
         }
     }
 
-    const [messages, sendMsg, isConnected, transport] = useChat("User" + (100 * Math.random()).toFixed(0))
+    const [messages, sendMsg, isConnected, transport] = useChat("User" + rnd(99), rnd(2))
 
     return (
         <main className={styles.main}>
             <div className={styles.top}>
-                <input type="text" />
-                <button onClick={(e) => onBtnClick(e)}>Skicka</button>
-                <input type="text" defaultValue="2" />
-                <button onClick={(e) => onBtnSpam(e)}>Spam!</button>
+                <input type="text" id="msg" />
+                <button onClick={onBtnClick}>Skicka</button>
                 <span>Connected:</span><span>{isConnected + ""}</span>
+                <input type="text" id="delay" defaultValue="2" />
+                <button onClick={onBtnSpam}>Spam!</button>
                 <span>Transport:</span><span>{transport}</span>
             </div>
             <hr />
