@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Msg, Split } from '@/lib/interfaces';
+import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 
 interface ChatContextType {
@@ -12,8 +12,6 @@ interface ChatContextType {
     transport: string,
     room: number,
     user: string,
-    layout: Split | undefined,
-    setLayout: React.Dispatch<React.SetStateAction<Split | undefined>>
 };
 
 /*interface LS {
@@ -71,7 +69,6 @@ export function ChatProvider({
     const [messages, setMessages] = useState<Msg[]>([])
     const [room, setRoom] = useState(-1)
     const [user] = useState("User" + rnd(99))
-    const [layout, setLayout] = useState<Split | undefined>()
 
     /*  useEffect(() => {
         const lsi = localStorage.getItem("Products");
@@ -98,7 +95,7 @@ export function ChatProvider({
 
     return (
         <ChatContext.Provider value={{
-            messages, joinRoom, sendMsg, isConnected, transport, room, user, layout, setLayout
+            messages, joinRoom, sendMsg, isConnected, transport, room, user
         }}>
             {children}
         </ChatContext.Provider>

@@ -1,14 +1,14 @@
 "use client"
-import { useChatContext } from "./chatcontext"
-import ChatRoom from "./chatroom"
+import ChatRoomCont from "./chatroomcont"
+import { useLayoutContext } from "./layoutcontext"
 import Splitter from "./splitter"
 
 export default function PageC() {
-    const cc = useChatContext()
+    const lc = useLayoutContext()
 
     return (<>
-        {cc.layout ?
-            <Splitter layout={cc.layout} /> :
-            <ChatRoom />}
+        {lc.layout ?
+            <Splitter layout={lc.layout} /> :
+            <ChatRoomCont />}
     </>)
 }

@@ -1,6 +1,6 @@
 import { Split } from "@/lib/interfaces"
-import ChatRoom from "./chatroom"
 import styles from "./splitter.module.css"
+import ChatRoomCont from "./chatroomcont"
 
 export default function Splitter({
     layout
@@ -14,10 +14,10 @@ export default function Splitter({
                 { gridTemplateColumns: layout.percent + "% " + (100 - layout.percent) + "%" }}>
             {layout.child1 ?
                 <Splitter layout={layout.child1} /> :
-                <ChatRoom />}
+                <ChatRoomCont />}
             {layout.child2 ?
                 <Splitter layout={layout.child2} /> :
-                <ChatRoom />}
+                <ChatRoomCont />}
         </div>
     )
 }

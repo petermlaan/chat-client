@@ -1,6 +1,7 @@
 "use client"
-import { useChatContext } from "./chatcontext"
+import { ChatProvider, useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
+import Rooms from "./rooms"
 
 const spam = [
     "SPAM!!!",
@@ -35,7 +36,7 @@ export default function ChatRoom() {
             }, delay)
         }
     }
-     const cc = useChatContext()
+    const cc = useChatContext()
 
     return (
         <div className={styles.chatroom}>
@@ -48,6 +49,7 @@ export default function ChatRoom() {
                 <button onClick={onBtnSpam}>Spam!</button>
                 <span>Transport:</span><span>{cc.transport}</span>
                 <span>User:</span><span>{cc.user}</span>
+                <Rooms />
             </div>
             <hr />
             <div className={styles.msgs}>
