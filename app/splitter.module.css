@@ -1,5 +1,7 @@
 .cont {
   display: grid;
-  gap: 0.2rem;
+  min-height: 0;
   height: 100%;
+  width: 100%;
+  overflow: hidden;
 }

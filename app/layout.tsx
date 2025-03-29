@@ -34,9 +34,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
         <LayoutProvider>
-          <h1 className="logo">Chaticus Maximus</h1>
-          <EditLayout />
-          {children}
+          <div className="page">
+            <div className="banner">
+              <h1 className="logo">Chaticus Maximus</h1>
+              <EditLayout />
+            </div>
+            {children}
+          </div>
         </LayoutProvider>
       </body>
     </html>

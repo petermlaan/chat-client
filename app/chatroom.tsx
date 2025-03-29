@@ -1,5 +1,5 @@
 "use client"
-import { ChatProvider, useChatContext } from "./chatcontext"
+import { useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
 
@@ -40,6 +40,11 @@ export default function ChatRoom() {
 
     return (
         <div className={styles.chatroom}>
+            <div className={styles.msgs}>
+                {cc.messages.map((m, i) =>
+                    <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
+                )}
+            </div>
             <div className={styles.top}>
                 <input type="text" id="msg" />
                 <button onClick={onBtnClick}>Skicka</button>
@@ -50,12 +55,6 @@ export default function ChatRoom() {
                 <span>Transport:</span><span>{cc.transport}</span>
                 <span>User:</span><span>{cc.user}</span>
                 <Rooms />
-            </div>
-            <hr />
-            <div className={styles.msgs}>
-                {cc.messages.map((m, i) =>
-                    <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
-                )}
             </div>
         </div>
     )

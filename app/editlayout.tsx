@@ -4,7 +4,7 @@ import { useLayoutContext } from "./layoutcontext"
 
 export default function EditLayout() {
     const lc = useLayoutContext()
-    
+
     function onSave() {
         const node = document.querySelector("#layout") as HTMLInputElement
         const str = node.value
@@ -13,10 +13,8 @@ export default function EditLayout() {
         lc.setLayout(layout)
     }
 
-    return (
-        <div>
-            <input type="text" id="layout" defaultValue={JSON.stringify(lc.layout)} />
-            <button onClick={onSave}>Save</button>
-        </div>
-    )
+    return (<>
+        <input type="text" id="layout" defaultValue={JSON.stringify(lc.layout)} />
+        <button onClick={onSave}>Save</button>
+    </>)
 }
