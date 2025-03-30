@@ -5,7 +5,7 @@ export default function Rooms() {
     const cc = useChatContext()
 
     return (
-        <select onChange={(e) => cc.joinRoom(+e.target.value)}>
+        <select id="room" onChange={(e) => cc.joinRoom(+e.target.value)}>
             <option value={-1}>Chat room</option>
             <option value={0}>Room 1</option>
             <option value={1}>Room 2</option>
