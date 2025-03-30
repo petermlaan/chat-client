@@ -43,10 +43,12 @@ export function ChatProvider({
 
         if (socket && isConnected)
             socket.disconnect()
+        if (roomNo < 0)
+            return
 
         const s = io("ws://localhost:808" + roomNo, { auth: { token: user } })
-        setRoom(roomNo)
         setSocket(s)
+        setRoom(roomNo)
         if (s) {
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)

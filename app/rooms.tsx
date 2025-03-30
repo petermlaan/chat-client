@@ -4,9 +4,12 @@ import { useChatContext } from "./chatcontext"
 export default function Rooms() {
     const cc = useChatContext()
 
-    return (<>
-        <button onClick={() => cc.joinRoom(0)}>Rum 1</button>
-        <button onClick={() => cc.joinRoom(1)}>Rum 2</button>
-        <button onClick={() => cc.joinRoom(2)}>Rum 3</button>
-    </>)
+    return (
+        <select onChange={(e) => cc.joinRoom(+e.target.value)}>
+            <option value={-1}>Chat room</option>
+            <option value={0}>Room 1</option>
+            <option value={1}>Room 2</option>
+            <option value={2}>Room 3</option>
+        </select>
+    )
 }
