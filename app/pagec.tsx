@@ -5,7 +5,7 @@ import Splitter from "./splitter"
 export default function PageC() {
     const lc = useLayoutContext()
 
-    return (<>
+    return (<main>
             <Splitter layout={lc.layout} />
-    </>)
+    </main>)
 }

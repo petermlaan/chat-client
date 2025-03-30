@@ -1,10 +1,12 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Split } from '@/lib/interfaces';
+import { ChatRoom } from '@/lib/server/db';
 
 interface LayoutContextType {
   layout: Split | undefined,
-  setLayout: (layout: Split) => void
+  setLayout: (layout: Split) => void,
+  rooms: ChatRoom[],
 }
 
 interface LS {
@@ -14,13 +16,17 @@ interface LS {
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
 
 export function LayoutProvider({
+  chatRooms,
   children
 }: {
+  chatRooms: ChatRoom[]
   children: React.ReactNode
 }) {
   const [layout, setStateLayout] = useState<Split | undefined>()
+  const [rooms, setRooms] = useState<ChatRoom[]>([])
 
   useEffect(() => {
+    setRooms(chatRooms)
     const lsi = localStorage.getItem("Chaticus")
     if (lsi) {
       const lso: LS = JSON.parse(lsi)
@@ -43,7 +49,7 @@ export function LayoutProvider({
 
   return (
     <LayoutContext.Provider value={{
-      layout, setLayout
+      layout, setLayout, rooms
     }}>
       {children}
     </LayoutContext.Provider>

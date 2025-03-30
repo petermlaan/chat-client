@@ -1,7 +1,8 @@
 "use client"
-import { MouseEvent as ReactMouseEvent} from "react"
+import { MouseEvent as ReactMouseEvent } from "react"
 import { useChatContext } from "./chatcontext"
 import { query } from "@/lib/util"
+import { useLayoutContext } from "./layoutcontext"
 
 export default function Rooms() {
     function onBtnConnect(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -17,13 +18,13 @@ export default function Rooms() {
     }
 
     const cc = useChatContext()
+    const lc = useLayoutContext()
 
     return (<div className="flexcent">
         <select id="room" onChange={(e) => cc.joinRoom(+e.target.value)}>
             <option value={-1}>Chat room</option>
-            <option value={0}>Room 1</option>
-            <option value={1}>Room 2</option>
-            <option value={2}>Room 3</option>
+            {lc.rooms.map(r =>
+                <option value={r.id} key={r.id}>{r.name}</option>)}
         </select>
         <button onClick={onBtnConnect} className="imgbtn">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"

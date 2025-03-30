@@ -51,6 +51,10 @@ button, input, select {
   }
 }
 
+main {
+  height: 100%;
+}
+
 .imgbtn {
   width: auto;
   border: none;  
