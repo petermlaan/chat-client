@@ -4,6 +4,7 @@ import { useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
 import { useState } from "react"
+import Image from "next/image"
 
 const spam = [
     "SPAM!!!",
@@ -55,15 +56,19 @@ export default function ChatRoom() {
                     <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
                 )}
             </div>
-            <div className={styles.top}>
+            <div className={styles.ctrl}>
+                <Rooms />
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                    viewBox="0 0 24 24" fill="none" stroke-width="2"
+                    stroke={cc.isConnected ? "yellow" : "grey"} 
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
+                </svg>
                 <input type="text" id="msg" />
                 <button onClick={onBtnClick}>Send</button>
-                <span>Connected:</span><span>{cc.isConnected + ""}</span>
-                <span>Room:</span><span>{cc.room}</span>
-                <Rooms />
                 <button onClick={onBtnSpam}>Spam!</button>
-                <span>Transport:</span><span>{cc.transport}</span>
-                <span>User:</span><span>{cc.user}</span>
+                <span>{cc.transport}</span>
+                <span>{cc.user}</span>
             </div>
         </div>
     )
