@@ -1,9 +1,9 @@
 "use client"
-import { rnd } from "@/lib/util"
+import { MouseEvent as ReactMouseEvent } from "react"
+import { query, rnd } from "@/lib/util"
 import { useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
-import { MouseEvent as ReactMouseEvent} from "react"
 
 const spam = [
     "SPAM!!!",
@@ -61,20 +61,6 @@ export default function ChatRoom() {
             cc.setSpamId(id)
         }
     }
-    function onBtnConnect(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        if (cc.isConnected) {
-            cc.joinRoom(-1)
-        } else {
-            const node = query("#room", e.currentTarget)
-            if (node) {
-                const sel = node as HTMLSelectElement
-                cc.joinRoom(+sel.value)
-            }
-        }
-    }
-    function query(selector: string, node: HTMLElement) {
-        return node.parentElement?.querySelector(selector)
-    }
 
     const cc = useChatContext()
 
@@ -87,24 +73,18 @@ export default function ChatRoom() {
             </div>
             <div className={styles.ctrl}>
                 <Rooms />
-                <button onClick={onBtnConnect} className={styles.imgbtn}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                        viewBox="0 0 24 24" fill="none" strokeWidth="2"
-                        stroke={cc.isConnected ? "yellow" : "grey"}
-                        strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
-                    </svg>
-                </button>
-                <input type="text" className={styles.msgtxt} />
-                <button onClick={onBtnSend} className={styles.imgbtn}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-                    viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2" 
-                    strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" />
-                        <path d="M6 12h16" />
-                    </svg>
-                </button>
-                <button onClick={onBtnSpam} className={styles.imgbtn}>
+                <div className="flexcentgrow">
+                    <input type="text" className={styles.msgtxt} />
+                    <button onClick={onBtnSend} className="imgbtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2"
+                            strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3.714 3.048a.498.498 0 0 0-.683.627l2.843 7.627a2 2 0 0 1 0 1.396l-2.842 7.627a.498.498 0 0 0 .682.627l18-8.5a.5.5 0 0 0 0-.904z" />
+                            <path d="M6 12h16" />
+                        </svg>
+                    </button>
+                </div>
+                <button onClick={onBtnSpam} className="imgbtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                         viewBox="0 0 24 24" fill="none" stroke={cc.spamId > -1 ? "yellow" : "grey"}
                         strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

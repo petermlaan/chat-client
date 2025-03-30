@@ -44,9 +44,30 @@ a {
   }
 }
 
-button, input {
+button, input, select {
+  background-color: var(--background);
+  color: var(--foreground);
   height: 1.4em;
   width: 7em;
+}
+
+.imgbtn {
+  width: auto;
+  border: none;  
+  background-color: var(--background);
+}
+
+.flexcent {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.flexcentgrow {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
 }
 
 .page {
