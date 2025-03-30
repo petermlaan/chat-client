@@ -57,7 +57,7 @@ export default function ChatRoom() {
             </div>
             <div className={styles.top}>
                 <input type="text" id="msg" />
-                <button onClick={onBtnClick}>Skicka</button>
+                <button onClick={onBtnClick}>Send</button>
                 <span>Connected:</span><span>{cc.isConnected + ""}</span>
                 <span>Room:</span><span>{cc.room}</span>
                 <Rooms />
