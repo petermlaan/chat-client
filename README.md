@@ -1,8 +1,9 @@
 npx create-next-app@latest
 
-npm i 
+npm install:
 socket.io-client
 @clerk/nextjs
+@supabase/supabase-js @supabase/ssr
 
 npx next telemetry disable
 
