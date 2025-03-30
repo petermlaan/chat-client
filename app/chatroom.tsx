@@ -3,8 +3,6 @@ import { rnd } from "@/lib/util"
 import { useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
-import { useState } from "react"
-import Image from "next/image"
 
 const spam = [
     "SPAM!!!",
@@ -19,6 +17,26 @@ const spam = [
     "sure!",
     "What is this room for???",
     "Chaticus Maximus caused the fall of the Roman Empire. They couldn't handle that many chats.",
+    "Hey everyone! 👋",
+    "What's the topic today?",
+    "Can someone help me with this bug? 🐛",
+    "LOL, that's hilarious! 😂",
+    "I think we should refactor the codebase.",
+    "Does anyone know when the meeting starts?",
+    "I'm stuck on this feature. Any ideas?",
+    "Good morning! ☀️",
+    "Why is this not working? 😩",
+    "Let's deploy this to production! 🚀",
+    "Can we add dark mode to the app?",
+    "This is the best chatroom ever! 😎",
+    "Who wants to grab lunch? 🍔",
+    "I just pushed a new commit. Please review.",
+    "What does this error even mean? 🤔",
+    "Can we schedule a quick sync-up?",
+    "This is so frustrating! 😡",
+    "Great job on the release, team! 🎉",
+    "Does anyone have a good meme to share? 😄",
+    "I'm logging off for the day. See you tomorrow!"
 ]
 
 export default function ChatRoom() {
@@ -31,10 +49,6 @@ export default function ChatRoom() {
         }
     }
     function onBtnSpam() {
-        /*         const node = document.querySelector("#delay")
-                if (node) {
-                    const input = node as HTMLInputElement
-                    const delay = 1000 * +input.value */
         if (cc.spamId > -1) {
             window.clearInterval(cc.spamId)
             cc.setSpamId(-1)
@@ -47,7 +61,7 @@ export default function ChatRoom() {
         }
     }
     function onBtnConnect() {
-        if (cc.isConnected) { 
+        if (cc.isConnected) {
             cc.joinRoom(-1)
         } else {
             const node = document.querySelector("#room")
