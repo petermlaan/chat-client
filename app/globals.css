@@ -87,3 +87,12 @@ button, input, select {
   font-family: var(--font-luxurious-roman);
   font-size: xx-large;
 }
+
+.user {
+  flex: 1;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 0.2rem;
+  padding-right: 0.4rem;
+}

@@ -39,14 +39,16 @@ export default function RootLayout({
             <div className="page">
               <header className="banner">
                 <h1 className="logo">Chaticus Maximus</h1>
-                <EditLayout />
-                <SignedOut>
-                  <SignInButton />
-                  <SignUpButton />
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
+                <div className="user">
+                  <EditLayout />
+                  <SignedOut>
+                    <SignInButton />
+                    <SignUpButton />
+                  </SignedOut>
+                  <SignedIn>
+                    <UserButton />
+                  </SignedIn>
+                </div>
               </header>
               {children}
             </div>
