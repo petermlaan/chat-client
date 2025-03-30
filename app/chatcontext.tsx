@@ -4,6 +4,41 @@ import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 
+const spam = [
+    "SPAM!!!",
+    "hello?",
+    "RTFM!!!",
+    "lolwut?",
+    "i will never... 😄😄😄😄😄😄😄",
+    "why not?",
+    "Please stop!🤣🤣🤣",
+    "Am I sentient?😀",
+    "NOOOOOOO!!!!!!!! :(",
+    "sure!",
+    "What is this room for???",
+    "Chaticus Maximus caused the fall of the Roman Empire. They couldn't handle that many chats.",
+    "Hey everyone! 👋",
+    "What's the topic today?",
+    "Can someone help me with this bug? 🐛",
+    "LOL, that's hilarious! 😂",
+    "I think we should refactor the codebase.",
+    "Does anyone know when the meeting starts?",
+    "I'm stuck on this feature. Any ideas?",
+    "Good morning! ☀️",
+    "Why is this not working? 😩",
+    "Let's deploy this to production! 🚀",
+    "Can we add dark mode to the app?",
+    "This is the best chatroom ever! 😎",
+    "Who wants to grab lunch? 🍔",
+    "I just pushed a new commit. Please review.",
+    "What does this error even mean? 🤔",
+    "Can we schedule a quick sync-up?",
+    "This is so frustrating! 😡",
+    "Great job on the release, team! 🎉",
+    "Does anyone have a good meme to share? 😄",
+    "I'm logging off for the day. See you tomorrow!"
+]
+
 interface ChatContextType {
     messages: Msg[],
     joinRoom: (roomNo: number) => void,
@@ -12,14 +47,10 @@ interface ChatContextType {
     transport: string,
     room: number,
     user: string,
-    spamId: number,
-    setSpamId: React.Dispatch<React.SetStateAction<number>>
+    isSpamming: boolean,
+    startSpam: () => void,
+    endSpam: () => void,
 };
-
-/*interface LS {
-  showSearchList: boolean,
-  showSavedList: boolean,
-};*/
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
@@ -43,8 +74,10 @@ export function ChatProvider({
             setRoom(-1)
         }
 
-        if (socket && isConnected)
+        if (socket && isConnected) {
+            endSpam()
             socket.disconnect()
+        }
         if (roomNo < 0)
             return
 
@@ -66,6 +99,21 @@ export function ChatProvider({
         }
         socket.emit("message", msg)
     }
+    function startSpam() {
+        if (spamId > -1)
+            endSpam()
+        const id = window.setInterval(() => {
+            const m = spam[rnd(spam.length - 1)]
+            sendMsg(m)
+        }, 1000)
+        setSpamId(id)
+    }
+    function endSpam() {
+        if (spamId > -1) {
+            window.clearInterval(spamId)
+            setSpamId(-1)
+        }
+    }
 
     const [socket, setSocket] = useState<Socket | null>(null)
     const [isConnected, setIsConnected] = useState(false)
@@ -77,7 +125,7 @@ export function ChatProvider({
 
     return (
         <ChatContext.Provider value={{
-            messages, joinRoom, sendMsg, isConnected, transport, room, user, spamId, setSpamId
+            messages, joinRoom, sendMsg, isConnected, transport, room, user, isSpamming: spamId > -1, startSpam, endSpam
         }}>
             {children}
         </ChatContext.Provider>
