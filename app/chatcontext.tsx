@@ -39,7 +39,7 @@ export function ChatProvider({
         function onDisconnect() {
             console.log("onDisconnect")
             setIsConnected(false)
-            setTransport("N/A")
+            setTransport("")
             setRoom(-1)
         }
 
@@ -69,7 +69,7 @@ export function ChatProvider({
 
     const [socket, setSocket] = useState<Socket | null>(null)
     const [isConnected, setIsConnected] = useState(false)
-    const [transport, setTransport] = useState("N/A")
+    const [transport, setTransport] = useState("")
     const [messages, setMessages] = useState<Msg[]>([])
     const [room, setRoom] = useState(-1)
     const [user] = useState("User" + rnd(99))

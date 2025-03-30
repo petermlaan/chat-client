@@ -42,7 +42,7 @@ const spam = [
 
 export default function ChatRoom() {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = query("#msgtxt", e.currentTarget)
+        const node = query(".msgtxt", e.currentTarget)
         if (node) {
             const input = node as HTMLInputElement
             cc.sendMsg(input.value)
@@ -95,7 +95,7 @@ export default function ChatRoom() {
                         <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
                     </svg>
                 </button>
-                <input type="text" id="msgtxt" />
+                <input type="text" className={styles.msgtxt} />
                 <button onClick={onBtnSend} className={styles.imgbtn}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
                     viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2" 
@@ -112,8 +112,8 @@ export default function ChatRoom() {
                         <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
                     </svg>
                 </button>
-                <span>{cc.transport}</span>
                 <span>{cc.user}</span>
+                <span>{cc.transport}</span>
             </div>
         </div>
     )

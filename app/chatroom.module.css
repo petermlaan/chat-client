@@ -34,3 +34,7 @@
 .msg {
   padding: 0.4rem;
 }
+
+.msgtxt {
+  flex: 1;
+}
