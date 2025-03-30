@@ -1,4 +1,5 @@
 "use client"
+import { rnd } from "@/lib/util"
 import { useChatContext } from "./chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
@@ -13,7 +14,8 @@ const spam = [
     "Please stop!🤣🤣🤣",
     "Am I sentient?😀",
     "NOOOOOOO!!!!!!!! :(",
-    "sure?",
+    "sure!",
+    "What is this room for???",
 ]
 
 export default function ChatRoom() {
@@ -26,15 +28,15 @@ export default function ChatRoom() {
         }
     }
     function onBtnSpam() {
-        const node = document.querySelector("#delay")
+/*         const node = document.querySelector("#delay")
         if (node) {
             const input = node as HTMLInputElement
-            const delay = 1000 * +input.value
+            const delay = 1000 * +input.value */
             window.setInterval(() => {
-                const m = spam[Math.floor(Math.random() * 9.999)]
+                const m = spam[rnd(spam.length - 1)]
                 cc.sendMsg(m)
-            }, delay)
-        }
+            }, 1000)
+//        }
     }
     const cc = useChatContext()
 
@@ -50,11 +52,10 @@ export default function ChatRoom() {
                 <button onClick={onBtnClick}>Skicka</button>
                 <span>Connected:</span><span>{cc.isConnected + ""}</span>
                 <span>Room:</span><span>{cc.room}</span>
-                <input type="text" id="delay" defaultValue="1" />
+                <Rooms />
                 <button onClick={onBtnSpam}>Spam!</button>
                 <span>Transport:</span><span>{cc.transport}</span>
                 <span>User:</span><span>{cc.user}</span>
-                <Rooms />
             </div>
         </div>
     )
