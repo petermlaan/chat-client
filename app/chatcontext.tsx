@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
@@ -12,6 +12,8 @@ interface ChatContextType {
     transport: string,
     room: number,
     user: string,
+    spamId: number,
+    setSpamId: React.Dispatch<React.SetStateAction<number>>
 };
 
 /*interface LS {
@@ -71,33 +73,11 @@ export function ChatProvider({
     const [messages, setMessages] = useState<Msg[]>([])
     const [room, setRoom] = useState(-1)
     const [user] = useState("User" + rnd(99))
-
-    /*  useEffect(() => {
-        const lsi = localStorage.getItem("Products");
-        if (lsi) {
-          const lso: LS = SuperJSON.parse(lsi);
-          if (lso) {
-            setStateShowSearchList(lso.showSearchList);
-            setStateShowSavedList(lso.showSavedList);
-          }
-        }
-      }, []);*/
-
-    /*  const setShowSearchList = (showSearchList: boolean) => {
-        setStateShowSearchList(showSearchList);
-        storeInLS({
-          showSearchList,
-          showSavedList,
-        });
-      };*/
-
-    /*  const storeInLS = (lso: LS) => {
-        localStorage.setItem("Products", SuperJSON.stringify(lso));
-      }*/
+    const [spamId, setSpamId] = useState(-1)
 
     return (
         <ChatContext.Provider value={{
-            messages, joinRoom, sendMsg, isConnected, transport, room, user
+            messages, joinRoom, sendMsg, isConnected, transport, room, user, spamId, setSpamId
         }}>
             {children}
         </ChatContext.Provider>

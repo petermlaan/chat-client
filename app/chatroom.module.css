@@ -1,3 +1,9 @@
+.imgbtn {
+  width: auto;
+  border: none;  
+  background-color: var(--background);
+}
+
 .chatroom {
   display: flex;
   flex-direction: column;

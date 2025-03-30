@@ -35,18 +35,17 @@ export default function ChatRoom() {
                 if (node) {
                     const input = node as HTMLInputElement
                     const delay = 1000 * +input.value */
-        if (spamId > -1) {
-            window.clearInterval(spamId)
-            setSpamId(-1)
+        if (cc.spamId > -1) {
+            window.clearInterval(cc.spamId)
+            cc.setSpamId(-1)
         } else {
             const id = window.setInterval(() => {
                 const m = spam[rnd(spam.length - 1)]
                 cc.sendMsg(m)
             }, 1000)
-            setSpamId(id)
+            cc.setSpamId(id)
         }
     }
-    const [spamId, setSpamId] = useState(-1)
     const cc = useChatContext()
 
     return (
@@ -58,15 +57,22 @@ export default function ChatRoom() {
             </div>
             <div className={styles.ctrl}>
                 <Rooms />
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                    viewBox="0 0 24 24" fill="none" stroke-width="2"
-                    stroke={cc.isConnected ? "yellow" : "grey"} 
-                    stroke-linecap="round" stroke-linejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                    viewBox="0 0 24 24" fill="none" strokeWidth="2"
+                    stroke={cc.isConnected ? "yellow" : "grey"}
+                    strokeLinecap="round" strokeLinejoin="round">
                     <path d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2" />
                 </svg>
                 <input type="text" id="msg" />
                 <button onClick={onBtnClick}>Send</button>
-                <button onClick={onBtnSpam}>Spam!</button>
+                <button onClick={onBtnSpam} className={styles.imgbtn}>
+                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke={cc.spamId > -1 ? "yellow" : "grey"} 
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
+                        <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+                    </svg>
+                </button>
                 <span>{cc.transport}</span>
                 <span>{cc.user}</span>
             </div>
