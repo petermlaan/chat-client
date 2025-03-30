@@ -32,6 +32,14 @@ export default function ChatRoom() {
             </div>
             <div className={styles.ctrl}>
                 <Rooms />
+                <button onClick={onBtnSpam} className="imgbtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                        viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
+                        <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
+                    </svg>
+                </button>
                 <div className="flexcentgrow">
                     <input type="text" className={styles.msgtxt} />
                     <button onClick={onBtnSend} className="imgbtn">
@@ -43,14 +51,6 @@ export default function ChatRoom() {
                         </svg>
                     </button>
                 </div>
-                <button onClick={onBtnSpam} className="imgbtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                        viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}
-                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" />
-                        <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-                    </svg>
-                </button>
                 <span>{cc.user}</span>
                 <span>{cc.transport}</span>
             </div>
