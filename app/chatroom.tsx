@@ -50,7 +50,7 @@ export default function ChatRoom() {
                 <button onClick={onBtnClick}>Skicka</button>
                 <span>Connected:</span><span>{cc.isConnected + ""}</span>
                 <span>Room:</span><span>{cc.room}</span>
-                <input type="text" id="delay" defaultValue="2" />
+                <input type="text" id="delay" defaultValue="1" />
                 <button onClick={onBtnSpam}>Spam!</button>
                 <span>Transport:</span><span>{cc.transport}</span>
                 <span>User:</span><span>{cc.user}</span>
