@@ -1,7 +1,7 @@
 "use client"
 import { MouseEvent as ReactMouseEvent } from "react"
-import { query, rnd } from "@/lib/util"
 import { useChatContext } from "./chatcontext"
+import { query } from "@/lib/util"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
 

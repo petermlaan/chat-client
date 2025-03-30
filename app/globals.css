@@ -38,10 +38,6 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-
-  &:hover {
-    cursor: pointer;
-  }
 }
 
 button, input, select {
@@ -49,6 +45,10 @@ button, input, select {
   color: var(--foreground);
   height: 1.4em;
   width: 7em;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .imgbtn {

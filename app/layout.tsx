@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
 import "./globals.css";
 import EditLayout from "./editlayout";
 import { LayoutProvider } from "./layoutcontext";
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -31,18 +32,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
-        <LayoutProvider>
-          <div className="page">
-            <div className="banner">
-              <h1 className="logo">Chaticus Maximus</h1>
-              <EditLayout />
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
+          <LayoutProvider>
+            <div className="page">
+              <header className="banner">
+                <h1 className="logo">Chaticus Maximus</h1>
+                <EditLayout />
+                <SignedOut>
+                  <SignInButton />
+                  <SignUpButton />
+                </SignedOut>
+                <SignedIn>
+                  <UserButton />
+                </SignedIn>
+              </header>
+              {children}
             </div>
-            {children}
-          </div>
-        </LayoutProvider>
-      </body>
-    </html>
+          </LayoutProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
