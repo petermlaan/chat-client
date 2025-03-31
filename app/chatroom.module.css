@@ -29,6 +29,6 @@
   padding: 0.4rem;
 }
 
-.msgtxt {
+#msgtxt {
   flex: 1;
 }

@@ -7,7 +7,7 @@ import Rooms from "./rooms"
 
 export default function ChatRoom() {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = query(".msgtxt", e.currentTarget)
+        const node = query("#msgtxt", e.currentTarget)
         if (node) {
             const input = node as HTMLInputElement
             cc.sendMsg(input.value)
@@ -41,7 +41,7 @@ export default function ChatRoom() {
                     </svg>
                 </button>
                 <div className="flexcentgrow">
-                    <input type="text" className={styles.msgtxt} />
+                    <input type="text" id="msgtxt" />
                     <button onClick={onBtnSend} className="imgbtn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2"
