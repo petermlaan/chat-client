@@ -88,7 +88,10 @@ export function ChatProvider({
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
             s.on("message", e => {
-                setMessages(prev => [JSON.parse(e), ...prev])
+                setMessages(prev => {
+                    const newList = prev.length > 150 ? prev.slice(0, 100) : prev
+                    return [JSON.parse(e), ...newList]
+                })
             })
         }
     }
