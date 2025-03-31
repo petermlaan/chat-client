@@ -5,6 +5,7 @@ import EditLayout from "./editlayout";
 import { LayoutProvider } from "./layoutcontext";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { dbGetChatRooms } from "@/lib/server/db";
+import Navigation from "./navigation";
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -40,6 +41,7 @@ export default async function RootLayout({
             <div className="page">
               <header className="banner">
                 <h1 className="logo">Chaticus Maximus</h1>
+                <Navigation />
                 <div className="user">
                   <EditLayout />
                   <SignedOut>

@@ -25,7 +25,6 @@ body {
   max-height: 100vh;
   /* overflow: hidden; */
   font-family: var(--font-geist-sans);
-  /* font-size: large; */
 }
 
 body {
@@ -84,7 +83,6 @@ main {
 .banner {
   display: flex;
   align-items: center;
-  gap: 0 0.2rem;
 }
 
 .logo {
@@ -93,10 +91,40 @@ main {
 }
 
 .user {
-  flex: 1;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.2rem;
   padding-right: 0.4rem;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  padding: 0.2rem;
+}
+
+.nav {
+  flex: 1;
+  justify-self: flex-end;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: large;
+}
+
+.nav-link {
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-link:hover {
+  background-color: var(--foreground);
+  color: var(--background)
+}
+
+.nav-link.active {
+  background-color: var(--foreground);
+  color: var(--background);
 }

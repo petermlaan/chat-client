@@ -1,6 +1,6 @@
-import "server-only";
+import "server-only"
 import { createClient } from '@supabase/supabase-js'
-import { logPerformance } from "../util";
+import { logPerformance } from "../util"
 
 const supabase = createClient(
     process.env.SUPABASE_URL ?? "",

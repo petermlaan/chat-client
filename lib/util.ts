@@ -9,5 +9,5 @@ export function query(selector: string, node: HTMLElement) {
 }
 
 export function logPerformance(start: number, str: string) {
-    console.log(str + (performance.now() - start).toFixed(0) + " ms");
+    console.log(str + ": " + (performance.now() - start).toFixed(0) + " ms");
 }
