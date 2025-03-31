@@ -55,6 +55,12 @@ button, select {
   }
 }
 
+textarea {
+  background-color: var(--background);
+  color: var(--foreground);
+  height: 10rem;
+}
+
 main {
   height: 100%;
 }

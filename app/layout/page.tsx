@@ -28,13 +28,16 @@ export default function LayoutPage() {
                     <option>Layout 1</option>
                     <option>Layout 2</option>
                 </select>
-                <button>Select</button>
-                <button>Delete</button>
             </div>
             <div className="flexcent">
                 <span>Name:</span><input type="text" id="name" />
-                <span>Layout:</span><input type="text" id="layout" defaultValue={JSON.stringify(lc.layout)} />
+            </div>
+            <textarea id="layout" defaultValue={JSON.stringify(lc.layout)} />
+            <div className="flexcent">
                 <button onClick={onSave}>Create</button>
+                <button onClick={onSave}>Update</button>
+                <button>Delete</button>
+                <button>Use</button>
             </div>
         </div>
     )
