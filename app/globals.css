@@ -44,7 +44,9 @@ button, input, select {
   color: var(--foreground);
   height: 1.4em;
   width: 7em;
+}
 
+button, select {
   &:hover {
     cursor: pointer;
   }

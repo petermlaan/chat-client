@@ -5,12 +5,12 @@ import { ChatRoom } from '@/lib/server/db';
 
 interface LayoutContextType {
   layout: Split | undefined,
-  setLayout: (layout: Split) => void,
+  setLayout: (layout: Split | undefined) => void,
   rooms: ChatRoom[],
 }
 
 interface LS {
-  layout: Split,
+  layout: Split | undefined,
 }
 
 const LayoutContext = createContext<LayoutContextType | undefined>(undefined);
@@ -36,7 +36,7 @@ export function LayoutProvider({
     }
   }, [])
 
-  const setLayout = (layout: Split) => {
+  const setLayout = (layout: Split | undefined) => {
     setStateLayout(layout)
     storeInLS({
       layout,

@@ -43,7 +43,6 @@ export default async function RootLayout({
                 <h1 className="logo">Chaticus Maximus</h1>
                 <Navigation />
                 <div className="user">
-                  <EditLayout />
                   <SignedOut>
                     <SignInButton />
                     <SignUpButton />

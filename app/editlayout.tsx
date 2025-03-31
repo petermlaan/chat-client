@@ -9,10 +9,12 @@ export default function EditLayout() {
         const node = document.querySelector("#layout") as HTMLInputElement
         const str = node.value
         try {
-            const layout = JSON.parse(str) as Split
+            let layout;
+            if (str)
+                layout = JSON.parse(str) as Split
             lc.setLayout(layout)
         } catch (err) {
-            window.alert("Failed to parse layout string: " + str)
+            window.alert("Failed to parse layout string: " + str + " - Error: " + err)
         }
     }
 
