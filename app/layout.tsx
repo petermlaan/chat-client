@@ -1,11 +1,12 @@
+import "server-only"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
 import "./globals.css";
-import EditLayout from "./editlayout";
 import { GlobalProvider } from "../components/layoutcontext";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { dbGetChatRooms } from "@/lib/server/db";
 import Navigation from "./navigation";
+import Link from "next/link";
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -40,7 +41,7 @@ export default async function RootLayout({
           <GlobalProvider chatRooms={await dbGetChatRooms()}>
             <div className="page">
               <header className="banner">
-                <h1 className="logo">Chaticus Maximus</h1>
+                <Link href="/" prefetch={false}><h1 className="logo">Chaticus Maximus</h1></Link>
                 <Navigation />
                 <div className="user">
                   <SignedOut>

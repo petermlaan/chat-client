@@ -33,8 +33,7 @@ export default function LayoutPage() {
         if (name)
             lc.createLayout(name, layout)
     }
-    function onPick(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        console.log("onPick")
+    function onPick() {
         lc.setLayout(selLayout?.id ?? null)
     }
 

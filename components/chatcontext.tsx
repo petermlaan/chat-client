@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
-import { RedirectToSignIn, useUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 
 const spam = [
     "SPAM!!!",

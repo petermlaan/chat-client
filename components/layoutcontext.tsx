@@ -43,7 +43,7 @@ export function GlobalProvider({
         }
       }
     }
-  }, [])
+  }, [chatRooms])
 
   const setLayout = (layoutId: number | null) => {
     console.log("GC - setLayout: " + layoutId)
