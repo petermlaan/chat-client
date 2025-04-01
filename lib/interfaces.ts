@@ -10,3 +10,9 @@ export interface Split {
     child1?: Split,
     child2?: Split
 }
+
+export interface Layout {
+    id: number,
+    name: string,
+    layout: Split,
+}

@@ -1,8 +1,8 @@
 "use client"
 import { MouseEvent as ReactMouseEvent } from "react"
-import { useChatContext } from "./chatcontext"
+import { useChatContext } from "../components/chatcontext"
 import { query } from "@/lib/util"
-import { useLayoutContext } from "./layoutcontext"
+import { useGlobalContext } from "../components/layoutcontext"
 
 export default function Rooms() {
     function onBtnConnect(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
@@ -18,7 +18,7 @@ export default function Rooms() {
     }
 
     const cc = useChatContext()
-    const lc = useLayoutContext()
+    const lc = useGlobalContext()
 
     return (<div className="flexcent">
         <select id="room" onChange={(e) => cc.joinRoom(+e.target.value)}>

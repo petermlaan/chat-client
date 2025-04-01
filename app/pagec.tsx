@@ -1,11 +1,11 @@
 "use client"
-import { useLayoutContext } from "./layoutcontext"
+import { useGlobalContext } from "../components/layoutcontext"
 import Splitter from "./splitter"
 
 export default function PageC() {
-    const lc = useLayoutContext()
+    const lc = useGlobalContext()
 
     return (<main>
-            <Splitter layout={lc.layout} />
+            <Splitter layout={lc.layout?.layout} />
     </main>)
 }

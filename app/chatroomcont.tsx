@@ -1,4 +1,4 @@
-import { ChatProvider } from "./chatcontext";
+import { ChatProvider } from "../components/chatcontext";
 import ChatRoom from "./chatroom";
 
 export default function ChatRoomCont() {
