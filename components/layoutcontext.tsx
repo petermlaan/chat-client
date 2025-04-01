@@ -7,6 +7,7 @@ interface GlobalContextType {
   layouts: LS,
   layout: Layout | null,
   setLayout: (layoutId: number | null) => void,
+  deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
   rooms: ChatRoom[],
 }
@@ -53,7 +54,7 @@ export function GlobalProvider({
       return null
     })
     setLayouts(prev => {
-      const ls: LS = {...prev, selected: layoutId}
+      const ls: LS = { ...prev, selected: layoutId }
       storeInLS(ls)
       return ls
     })
@@ -71,6 +72,24 @@ export function GlobalProvider({
       return newList
     })
   }
+  const deleteLayout = (layoutId: number) => {
+    console.log("GC - deleteLayout: " + layoutId)
+    setStateLayout(prev => {
+      if (prev && prev.id === layoutId)
+        return null
+      else
+        return prev
+    })
+    setLayouts(prev => {
+      const ls: LS = {
+        layouts: prev.layouts.filter(l => l.id !== layoutId),
+        selected: prev.selected
+      }
+      storeInLS(ls)
+      return ls
+    })
+  }
+
 
   const storeInLS = (lso: LS) => {
     localStorage.setItem("Chaticus", JSON.stringify(lso))
@@ -78,7 +97,7 @@ export function GlobalProvider({
 
   return (
     <globalContext.Provider value={{
-      layouts, layout, setLayout, createLayout, rooms
+      layouts, layout, setLayout, deleteLayout, createLayout, rooms
     }}>
       {children}
     </globalContext.Provider>

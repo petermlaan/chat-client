@@ -13,40 +13,52 @@ export default function LayoutPage() {
             let layout;
             if (str)
                 layout = JSON.parse(str) as Split
-            //lc.setLayout(layout)
         } catch (err) {
             window.alert("Failed to parse layout string: " + str + " - Error: " + err)
         }
     }
     function onSelect(e: SyntheticEvent<HTMLSelectElement, Event>) {
-        const sel = lc.layouts.layouts.find(l => +e.currentTarget.value === l.id)
+        const sel = gc.layouts.layouts.find(l => +e.currentTarget.value === l.id)
         console.log("LayoutPage onSelect: ", sel)
-        setSelLayout(sel ?? null)
-        const nameNode = query("#name", e.currentTarget) as HTMLInputElement
-        nameNode.value = sel?.name ?? ""
-        const layoutNode = query("#layout", e.currentTarget) as HTMLTextAreaElement
-        layoutNode.value = JSON.stringify(sel?.layout)
+        render(sel ?? null)
     }
     function onCreate(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         const name = queryInput("#name", e.currentTarget)
         const layout = queryTextArea("#layout", e.currentTarget)
         if (name)
-            lc.createLayout(name, layout)
+            gc.createLayout(name, layout)
     }
     function onPick() {
-        lc.setLayout(selLayout?.id ?? null)
+        gc.setLayout(selLayout?.id ?? null)
+    }
+    function onDelete(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
+        console.log("onDelete: ", selLayout)
+        if (selLayout) {
+            gc.deleteLayout(selLayout.id)
+            const node = query("#layouts", e.currentTarget) as HTMLSelectElement
+            node.selectedIndex = 0
+            render(null)
+        }
+    }
+    function render(selLayout: Layout | null) {
+        console.log("LayoutPage render: ", selLayout)
+        const nameNode = document.querySelector("#name") as HTMLInputElement
+        nameNode.value = selLayout?.name ?? ""
+        const layoutNode = document.querySelector("#layout") as HTMLTextAreaElement
+        layoutNode.value = selLayout ? JSON.stringify(selLayout?.layout) : ""
+        setSelLayout(selLayout)
     }
 
-    const lc = useGlobalContext()
+    const gc = useGlobalContext()
     const [selLayout, setSelLayout] = useState<Layout | null>(null)
 
     return (
         <div className={styles.page}>
             <h2>Layout Editor</h2>
             <div className="flexcent">
-                <select onChange={onSelect} onSelect={onSelect}>
+                <select onChange={onSelect} id="layouts">
                     <option>Layouts...</option>
-                    {lc.layouts.layouts.map((l, i) => 
+                    {gc.layouts.layouts.map((l, i) => 
                         <option value={l.id} key={i}>{l.name}</option>
                     )}
                 </select>
@@ -59,7 +71,7 @@ export default function LayoutPage() {
             <div className="flexcent">
                 <button onClick={onCreate}>Create</button>
                 <button onClick={onSave}>Update</button>
-                <button>Delete</button>
+                <button onClick={onDelete}>Delete</button>
                 <button onClick={onPick}>Select</button>
             </div>
         </div>
