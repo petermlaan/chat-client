@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
+import { RedirectToSignIn, useUser } from '@clerk/nextjs';
 
 const spam = [
     "SPAM!!!",
@@ -46,7 +47,6 @@ interface ChatContextType {
     isConnected: boolean,
     transport: string,
     room: number,
-    user: string,
     isSpamming: boolean,
     startSpam: () => void,
     endSpam: () => void,
@@ -80,8 +80,12 @@ export function ChatProvider({
         }
         if (roomNo < 0)
             return
-
-        const s = io("ws://localhost:808" + roomNo, { auth: { token: user } })
+        if (!usr.isLoaded || !usr.isSignedIn) {
+            window.alert("You have to sign in before you can join a chat room")
+            return
+        }
+            
+        const s = io("ws://localhost:808" + roomNo, { auth: { token: usr?.user?.username } })
         setSocket(s)
         setRoom(roomNo)
         if (s) {
@@ -131,12 +135,12 @@ export function ChatProvider({
     const [transport, setTransport] = useState("")
     const [messages, setMessages] = useState<Msg[]>([])
     const [room, setRoom] = useState(-1)
-    const [user] = useState("User" + rnd(99))
     const [spamId, setSpamId] = useState(-1)
+    const usr = useUser()
 
     return (
         <ChatContext.Provider value={{
-            messages, joinRoom, sendMsg, isConnected, transport, room, user, isSpamming: spamId > -1, startSpam, endSpam
+            messages, joinRoom, sendMsg, isConnected, transport, room, isSpamming: spamId > -1, startSpam, endSpam
         }}>
             {children}
         </ChatContext.Provider>

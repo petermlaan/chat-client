@@ -51,7 +51,6 @@ export default function ChatRoom() {
                         </svg>
                     </button>
                 </div>
-                <span>{cc.user}</span>
                 <span>{cc.transport}</span>
             </div>
         </div>
