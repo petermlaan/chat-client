@@ -7,7 +7,7 @@ import Rooms from "./rooms"
 
 export default function ChatRoom() {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = query("#msgtxt", e.currentTarget)
+        const node = query(".msgtxt", e.currentTarget)
         if (node) {
             const input = node as HTMLInputElement
             cc.sendMsg(input.value)
