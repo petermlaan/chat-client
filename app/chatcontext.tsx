@@ -88,10 +88,18 @@ export function ChatProvider({
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
             s.on("message", e => {
-                setMessages(prev => {
-                    const newList = prev.length > 150 ? prev.slice(0, 100) : prev
-                    return [JSON.parse(e), ...newList]
-                })
+                console.log("message: ", e)
+                const msg: Msg = e
+                if (msg.type === 0)
+                    setMessages(prev => {
+                        const newList = prev.length > 150 ? prev.slice(0, 100) : prev
+                        return [msg, ...newList]
+                    })
+                else if (msg.type === 1 || msg.type === 2)
+                    setMessages(prev => {
+                        msg.msg = (msg.type === 1 ? "<joined" : "<left") + " the channel>"
+                        return [msg, ...prev]
+                    })
             })
         }
     }

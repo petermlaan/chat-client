@@ -1,4 +1,5 @@
 export interface Msg {
+    type: number;
     user: string;
     msg: string;
 }
