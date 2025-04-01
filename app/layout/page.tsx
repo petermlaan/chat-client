@@ -21,12 +21,15 @@ export default function LayoutPage() {
         const sel = gc.layouts.layouts.find(l => +e.currentTarget.value === l.id)
         console.log("LayoutPage onSelect: ", sel)
         render(sel ?? null)
+        setSelLayout(sel ?? null)
     }
     function onCreate(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         const name = queryInput("#name", e.currentTarget)
         const layout = queryTextArea("#layout", e.currentTarget)
-        if (name)
+        if (name) {
             gc.createLayout(name, layout)
+            render(null)
+        }
     }
     function onPick() {
         gc.setLayout(selLayout?.id ?? null)
@@ -38,6 +41,8 @@ export default function LayoutPage() {
             const node = query("#layouts", e.currentTarget) as HTMLSelectElement
             node.selectedIndex = 0
             render(null)
+            if (gc.layout?.id === selLayout.id)
+                setSelLayout(selLayout)
         }
     }
     function render(selLayout: Layout | null) {
@@ -46,7 +51,6 @@ export default function LayoutPage() {
         nameNode.value = selLayout?.name ?? ""
         const layoutNode = document.querySelector("#layout") as HTMLTextAreaElement
         layoutNode.value = selLayout ? JSON.stringify(selLayout?.layout) : ""
-        setSelLayout(selLayout)
     }
 
     const gc = useGlobalContext()
