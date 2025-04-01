@@ -97,25 +97,31 @@ main {
 
 .banner {
   display: flex;
+  height: 3rem;
   align-items: center;
   border-bottom: 1px solid;
   padding: 0.2rem;
 }
 
 .logo {
-  position: absolute;
-  top: 0;
+  top: 0.2rem;
   font-family: var(--font-luxurious-roman);
   font-size: xx-large;
+
+  @media (width > 50rem) {
+    position: absolute;
+  }
 }
 
 .user {
-  position: absolute;
-  right: 0;
+  right: 0.4rem;
   display: flex;
   align-items: center;
   gap: 0.2rem;
-  padding-right: 0.4rem;
+
+  @media (width > 50rem) {
+    position: absolute;
+  }
 }
 
 .msgtxt {
