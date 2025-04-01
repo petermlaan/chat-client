@@ -98,16 +98,21 @@ main {
 .banner {
   display: flex;
   align-items: center;
+  border-bottom: 1px solid;
+  padding: 0.2rem;
 }
 
 .logo {
+  position: absolute;
+  top: 0;
   font-family: var(--font-luxurious-roman);
   font-size: xx-large;
 }
 
 .user {
+  position: absolute;
+  right: 0;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
   gap: 0.2rem;
   padding-right: 0.4rem;
@@ -117,21 +122,16 @@ main {
   flex: 1;
 }
 
-header {
-  display: flex;
-  align-items: center;
-  padding: 0.2rem;
-}
-
 .nav {
   flex: 1;
-  justify-self: flex-end;
   display: flex;
   justify-content: center;
   gap: 1rem;
   font-size: large;
 
   .nav-link {
+    text-align: center;
+    width: 5rem;
     padding: 0.4rem 1rem;
     border-radius: 4px;
     transition: background-color 0.2s;
