@@ -9,6 +9,7 @@ interface GlobalContextType {
   setLayout: (layoutId: number | null) => void,
   deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
+  saveLayout: (layout: Layout) => void,
   resetDefaults: () => void,
   rooms: ChatRoom[],
 }
@@ -49,13 +50,13 @@ const defaultLayouts: Layouts = {
     {
       id: 5,
       name: "Six",
-      layout: { 
-        vertical: false, percent: 67, child1: { 
-          vertical: false, percent: 50, 
-          child1: {vertical: true, percent: 50},
-          child2: {vertical: true, percent: 50}
-        }, 
-        child2: {vertical: true, percent: 50} 
+      layout: {
+        vertical: false, percent: 67, child1: {
+          vertical: false, percent: 50,
+          child1: { vertical: true, percent: 50 },
+          child2: { vertical: true, percent: 50 }
+        },
+        child2: { vertical: true, percent: 50 }
       }
     },
   ]
@@ -107,65 +108,75 @@ export function GlobalProvider({
     }
   }, [chatRooms])
 
-const setLayout = (layoutId: number | null) => {
-  console.log("GC - setLayout: " + layoutId)
-  setStateLayout(prev => {
-    if (prev)
-      return layouts?.layouts?.find(l => l.id === layoutId) ?? null
-    return null
-  })
-  setLayouts(prev => {
-    const ls: Layouts = { ...prev, selected: layoutId }
-    storeInLS(ls)
-    return ls
-  })
-}
-
-const createLayout = (name: string, layout: string) => {
-  const newLayout: Layout = {
-    name,
-    layout: JSON.parse(layout),
-    id: layouts.layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
-  }
-  setLayouts(prev => {
-    const newList = { ...prev, layouts: [...prev.layouts, newLayout] }
-    storeInLS(newList)
-    return newList
-  })
-}
-
-const deleteLayout = (layoutId: number) => {
-  console.log("GC - deleteLayout: " + layoutId)
-  setStateLayout(prev => {
-    if (prev && prev.id === layoutId)
+  const setLayout = (layoutId: number | null) => {
+    console.log("GC - setLayout: " + layoutId)
+    setStateLayout(prev => {
+      if (prev)
+        return layouts?.layouts?.find(l => l.id === layoutId) ?? null
       return null
-    else
-      return prev
-  })
-  setLayouts(prev => {
-    const ls: Layouts = {
-      layouts: prev.layouts.filter(l => l.id !== layoutId),
-      selected: prev.selected
+    })
+    setLayouts(prev => {
+      const ls: Layouts = { ...prev, selected: layoutId }
+      storeInLS(ls)
+      return ls
+    })
+  }
+
+  const createLayout = (name: string, layout: string) => {
+    const newLayout: Layout = {
+      name,
+      layout: JSON.parse(layout),
+      id: layouts.layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
     }
-    storeInLS(ls)
-    return ls
-  })
-}
+    setLayouts(prev => {
+      const newList = { ...prev, layouts: [...prev.layouts, newLayout] }
+      storeInLS(newList)
+      return newList
+    })
+  }
 
-const storeInLS = (lso: Layouts) => {
-  localStorage.setItem("Chaticus", JSON.stringify(lso))
-}
+  const saveLayout = (layout: Layout) => {
+    const newList = [...layouts.layouts]
+    const index = newList.findIndex(l => l.id === layout.id)
+    if (index > -1)
+      newList[index] = layout
+    const newLayout: Layouts = { layouts: newList, selected: layouts.selected }
+    setLayouts(newLayout)
+    storeInLS(newLayout)
+  }
 
-return (
-  <globalContext.Provider value={{
-    layouts, layout, setLayout, 
-    deleteLayout, createLayout, 
-    resetDefaults: storeDefaultLayouts, 
-    rooms
-  }}>
-    {children}
-  </globalContext.Provider>
-);
+  const deleteLayout = (layoutId: number) => {
+    console.log("GC - deleteLayout: " + layoutId)
+    setStateLayout(prev => {
+      if (prev && prev.id === layoutId)
+        return null
+      else
+        return prev
+    })
+    setLayouts(prev => {
+      const ls: Layouts = {
+        layouts: prev.layouts.filter(l => l.id !== layoutId),
+        selected: prev.selected
+      }
+      storeInLS(ls)
+      return ls
+    })
+  }
+
+  const storeInLS = (lso: Layouts) => {
+    localStorage.setItem("Chaticus", JSON.stringify(lso))
+  }
+
+  return (
+    <globalContext.Provider value={{
+      layouts, layout, setLayout,
+      deleteLayout, createLayout, saveLayout,
+      resetDefaults: storeDefaultLayouts,
+      rooms
+    }}>
+      {children}
+    </globalContext.Provider>
+  );
 }
 
 export function useGlobalContext() {
