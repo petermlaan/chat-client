@@ -18,12 +18,12 @@ export default function Rooms() {
     }
 
     const cc = useChatContext()
-    const lc = useGlobalContext()
+    const gc = useGlobalContext()
 
     return (<div className="flexcent">
         <select id="room" onChange={(e) => cc.joinRoom(+e.target.value)}>
             <option value={-1}>Chat room</option>
-            {lc.rooms.map(r =>
+            {gc.rooms.map(r =>
                 <option value={r.id} key={r.id}>{r.name}</option>)}
         </select>
         <button onClick={onBtnConnect} className="imgbtn">
