@@ -7,14 +7,18 @@ import { query, queryInput, queryTextArea } from "@/lib/util"
 
 export default function LayoutPage() {
     function onSave() {
-        const node = document.querySelector("#layout") as HTMLInputElement
-        const str = node.value
-        try {
-            let layout;
-            if (str)
-                layout = JSON.parse(str) as Split
-        } catch (err) {
-            window.alert("Failed to parse layout string: " + str + " - Error: " + err)
+        const nameNode = document.querySelector("#name") as HTMLInputElement | null
+        if (selLayout && nameNode?.value) {
+            const layoutNode = document.querySelector("#layout") as HTMLInputElement
+            try {
+                let layout: Split | undefined = undefined
+                if (layoutNode.value && layoutNode.value !== "undefined")
+                    layout = JSON.parse(layoutNode.value)
+                const updatedLayout: Layout = { ...selLayout, layout: layout, name: nameNode.value }
+                gc.saveLayout(updatedLayout)
+            } catch (err) {
+                window.alert("Failed to parse layout string: " + layoutNode.value + " - Error: " + err)
+            }
         }
     }
     function onSelect(e: SyntheticEvent<HTMLSelectElement, Event>) {
