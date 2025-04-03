@@ -45,6 +45,13 @@ export default function LayoutPage() {
                 setSelLayout(selLayout)
         }
     }
+    function onReset() {
+        console.log("onReset")
+        if (window.confirm("Are you sure you want to DELETE ALL layouts and restore the default ones?")) {
+            gc.resetDefaults()
+            render(null)
+        }
+    }
     function render(selLayout: Layout | null) {
         console.log("LayoutPage render: ", selLayout)
         const nameNode = document.querySelector("#name") as HTMLInputElement
@@ -62,7 +69,7 @@ export default function LayoutPage() {
             <div className="flexcent">
                 <select onChange={onSelect} id="layouts">
                     <option>Layouts...</option>
-                    {gc.layouts.layouts.map((l, i) => 
+                    {gc.layouts.layouts.map((l, i) =>
                         <option value={l.id} key={i}>{l.name}</option>
                     )}
                 </select>
@@ -72,11 +79,12 @@ export default function LayoutPage() {
                 <input type="text" id="name" />
             </div>
             <textarea id="layout" />
-            <div className="flexcent">
+            <div className="flexcentwrap">
                 <button onClick={onCreate}>Create</button>
                 <button onClick={onSave}>Update</button>
                 <button onClick={onDelete}>Delete</button>
                 <button onClick={onPick}>Select</button>
+                <button onClick={onReset}>Reset all</button>
             </div>
         </div>
     )
