@@ -1,5 +1,5 @@
-'use client';
-import { createContext, useContext, useState } from 'react';
+"use client"
+import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
@@ -61,6 +61,7 @@ export function ChatProvider({
 }) {
     function joinRoom(roomNo: number) {
         function onConnect() {
+            console.log("onConnect")
             setIsConnected(true)
             if (s) {
                 setTransport(s.io.engine.transport.name)
@@ -72,27 +73,23 @@ export function ChatProvider({
             setIsConnected(false)
             setTransport("")
             setRoom(-1)
-        }
-
-        if (socket && isConnected) {
             endSpam()
-            socket.disconnect()
         }
+        endSpam()
+        disconnect(socket)
+        setRoom(roomNo)
         if (roomNo < 0)
             return
-        if (!usr.isLoaded || !usr.isSignedIn) {
+        if (!usr.isLoaded || !usr.isSignedIn || !usr.user) {
             window.alert("You have to sign in before you can join a chat room")
             return
         }
-            
-        const s = io("ws://localhost:808" + roomNo, { auth: { token: usr?.user?.username } })
+        const s = io("ws://localhost:808" + roomNo, { auth: { token: usr.user.username } })
         setSocket(s)
-        setRoom(roomNo)
         if (s) {
             s.on("connect", onConnect)
             s.on("disconnect", onDisconnect)
             s.on("message", e => {
-                console.log("message: ", e)
                 const msg: Msg = e
                 if (msg.type === 0)
                     setMessages(prev => {
@@ -107,9 +104,17 @@ export function ChatProvider({
             })
         }
     }
+    function disconnect(s: Socket | null) {
+        if (s && s.connected) {
+            s.disconnect()
+            s.off("connect")
+            s.off("disconnect")
+            s.off("message")
+        }
+    }
     function sendMsg(msg: string) {
         if (!socket || !socket.connected) {
-            console.log("useChat: trying to send msg on null or closed socket", socket)
+            console.log("useChat: trying to send msg on null or closed socket", msg, socket)
             return
         }
         socket.emit("message", msg)
@@ -123,9 +128,10 @@ export function ChatProvider({
         }, 1000)
         setSpamId(id)
     }
-    function endSpam() {
-        if (spamId > -1) {
-            window.clearInterval(spamId)
+    function endSpam(sid?: number) {
+        const newSpamId = sid === undefined ? spamId : sid
+        if (newSpamId > -1) {
+            window.clearInterval(newSpamId)
             setSpamId(-1)
         }
     }
@@ -137,6 +143,14 @@ export function ChatProvider({
     const [room, setRoom] = useState(-1)
     const [spamId, setSpamId] = useState(-1)
     const usr = useUser()
+
+    useEffect(() => {
+        return () => disconnect(socket)
+    }, [socket])
+
+    useEffect(() => {
+        return () => endSpam(spamId)
+    }, [spamId])
 
     return (
         <ChatContext.Provider value={{
