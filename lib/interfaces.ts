@@ -14,5 +14,5 @@ export interface Split {
 export interface Layout {
     id: number,
     name: string,
-    layout: Split,
+    layout?: Split,
 }
