@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Layout } from '@/lib/interfaces';
-import { ChatRoom } from '@/lib/server/db';
+import { ChatRoom } from "@/lib/interfaces";
 
 interface GlobalContextType {
   layouts: Layouts,
