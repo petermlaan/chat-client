@@ -78,6 +78,7 @@ export function ChatProvider({
         endSpam()
         disconnect(socket)
         setRoom(roomNo)
+        setMessages([])
         if (roomNo < 0)
             return
         if (!usr.isLoaded || !usr.isSignedIn || !usr.user) {
