@@ -1,17 +1,19 @@
 "use client"
-import { MouseEvent as ReactMouseEvent } from "react"
+import { KeyboardEvent, MouseEvent as ReactMouseEvent } from "react"
 import { useChatContext } from "../components/chatcontext"
-import { query } from "@/lib/util"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
+import { query } from "@/lib/util"
 
 export default function ChatRoom() {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         const node = query(".msgtxt", e.currentTarget)
-        if (node) {
-            const input = node as HTMLInputElement
-            cc.sendMsg(input.value)
-            input.value = ""
+        sendMsg(node)
+    }
+    function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
+        if (e.key === 'Enter') {
+            const node = query(".msgtxt", e.currentTarget)
+            sendMsg(node)
         }
     }
     function onBtnSpam() {
@@ -19,6 +21,16 @@ export default function ChatRoom() {
             cc.endSpam()
         else
             cc.startSpam()
+    }
+    function sendMsg(inputEl: Element | null | undefined) {
+        const input = inputEl as HTMLInputElement
+        if (input) {
+            const msg = input.value.trim()
+            if (msg) {
+                cc.sendMsg(msg)
+                input.value = ""
+            }
+        }
     }
 
     const cc = useChatContext()
@@ -41,7 +53,7 @@ export default function ChatRoom() {
                     </svg>
                 </button>
                 <div className="flexcentgrow">
-                    <input type="text" className="msgtxt" />
+                    <input type="text" onKeyDown={onKeyDown} className="msgtxt" />
                     <button onClick={onBtnSend} className="imgbtn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2"
