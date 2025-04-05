@@ -148,11 +148,13 @@ export function GlobalProvider({
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
+    const client = getClient(clientId)
+    if (client.roomId === -1 && roomId === -1)
+      return
     if (!socket) {
       console.error("GC joinRoom: no socket", { clientId, roomId });
       return
     }
-    const client = getClient(clientId)
     if (client.roomId > -1) {
       // Leave old room
       console.log("GC joinRoom: leaving old room", { clientId, roomId });

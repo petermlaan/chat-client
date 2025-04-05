@@ -75,7 +75,8 @@ export function ChatProvider({
         endSpam()
         setRoom(roomId)
         setMessages([])
-        gc.joinRoom(clientId, roomId)
+        if (clientId > -1)
+            gc.joinRoom(clientId, roomId)
     }
     function sendMsg(msg: string) {
         gc.sendMsg(clientId, msg)
