@@ -9,6 +9,8 @@ interface GlobalContextType {
   layouts: Layouts,
   layout: Layout | null,
   rooms: ChatRoom[],
+  isConnected: boolean,
+  transport: string,
   setLayout: (layoutId: number | null) => void,
   deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
@@ -288,8 +290,8 @@ export function GlobalProvider({
 
   return (
     <globalContext.Provider value={{
-      layouts, layout, rooms, setLayout,
-      deleteLayout, createLayout, saveLayout,
+      layouts, layout, rooms, isConnected, transport,
+      setLayout, deleteLayout, createLayout, saveLayout,
       resetDefaults: storeDefaultLayouts,
       registerClient, joinRoom, sendMsg,
     }}>

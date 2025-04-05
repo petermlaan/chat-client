@@ -4,6 +4,7 @@ import { useChatContext } from "../components/chatcontext"
 import styles from "./chatroom.module.css"
 import Rooms from "./rooms"
 import { query } from "@/lib/util"
+import { useGlobalContext } from "@/components/globalcontext"
 
 export default function ChatRoom({
     roomId
@@ -67,7 +68,6 @@ export default function ChatRoom({
                         </svg>
                     </button>
                 </div>
-                <span>{cc.transport}</span>
             </div>
         </div>
     )
