@@ -59,16 +59,10 @@ export function ChatProvider({
     children: React.ReactNode
 }) {
     function onMessage(msg: Msg) {
-        if (msg.type === 0)
-            setMessages(prev => {
-                const newList = prev.length > 150 ? prev.slice(0, 100) : prev
-                return [msg, ...newList]
-            })
-        else if (msg.type === 1 || msg.type === 2)
-            setMessages(prev => {
-                msg.msg = (msg.type === 1 ? "<joined" : "<left") + " the channel>"
-                return [msg, ...prev]
-            })
+        setMessages(prev => {
+            const newList = prev.length > 150 ? prev.slice(0, 100) : prev
+            return [msg, ...newList]
+        })
     }
     function joinRoom(roomId: number) {
         console.log("joinRoom: " + roomId)

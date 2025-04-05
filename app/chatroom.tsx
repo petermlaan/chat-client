@@ -44,7 +44,7 @@ export default function ChatRoom({
         <div className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.messages.map((m, i) =>
-                    <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
+                    <div className={styles.msg} key={i}>{m.user + ": " + m.message}</div>
                 )}
             </div>
             <div className={styles.ctrl}>

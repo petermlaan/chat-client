@@ -158,13 +158,13 @@ export function GlobalProvider({
     if (client.roomId > -1) {
       // Leave old room
       console.log("GC joinRoom: leaving old room", { clientId, roomId });
-      socket.send(createMsg(3, client.roomId, ""))
+      socket.emit("leave", createMsg(client.roomId, ""))
     }
     client.roomId = roomId
     if (roomId > -1) {
       console.log("GC joinRoom: joining room", { clientId, roomId });
       // Join new room
-      socket.send(createMsg(4, roomId, ""))
+      socket.emit("join", createMsg(roomId, ""))
     }
   }
   function sendMsg(clientId: number, message: string) {
@@ -177,14 +177,36 @@ export function GlobalProvider({
       console.error("GC sendMsg: no socket or no connection", socket)
       return
     }
-    socket.emit("message", createMsg(0, roomId, message))
+    socket.emit("message", createMsg(roomId, message))
   }
 
   // Other functions
-  function onMessage(arg: any) {
-    const msg = arg as Msg
+  function onMessage(data: any) {
+    const msgs = data as Msg[]
+    console.log("GC onMessage: ", data, msgs, clients)
+    msgs.forEach(msg => {
+      clients.forEach(c => {
+        console.log("GC onMessage checking room: ", c.roomId, msg.room_id)
+        if (c.roomId === msg.room_id) {
+          console.log("GC onMessage relaying: ", msgs)
+          c.onMessage(msg)
+        }
+      })
+    })
+  }
+  function onJoined(data: any) {
+    console.log("GC onJoined", data)
+    const msg = data as Msg
     clients.forEach(c => {
-      if (c.roomId === msg.chatroom_id)
+      if (c.roomId === msg.room_id)
+        c.onMessage(msg)
+    })
+  }
+  function onLeft(data: any) {
+    console.log("GC onLeft", data)
+    const msg = data as Msg
+    clients.forEach(c => {
+      if (c.roomId === msg.room_id)
         c.onMessage(msg)
     })
   }
@@ -217,12 +239,12 @@ export function GlobalProvider({
       throw new Error("Found no client with clientId: " + clientId)
     return client
   }
-  function createMsg(type: number, roomId: number, message: string) {
+  function createMsg(roomId: number, message: string) {
     const msg: Msg = {
       user: usr.user?.username ?? "",
-      type: type,
-      chatroom_id: roomId,
-      msg: message,
+      room_id: roomId,
+      message: message,
+      save: true,
     }
     return msg
   }
@@ -278,6 +300,8 @@ export function GlobalProvider({
       s.on("connect", onConnect)
       s.on("disconnect", onDisconnect)
       s.on("message", onMessage)
+      s.on("joined", onJoined)
+      s.on("left", onLeft)
       setSocket(s)
     }
 
