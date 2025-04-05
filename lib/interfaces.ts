@@ -6,8 +6,9 @@ export interface Msg {
 }
 
 export interface Split {
-    percent: number,
-    vertical: boolean
+    percent?: number,
+    vertical?: boolean
+    roomId?: number,
     child1?: Split,
     child2?: Split
 }

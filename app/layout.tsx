@@ -2,7 +2,7 @@ import "server-only"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
 import "./globals.css";
-import { GlobalProvider } from "../components/layoutcontext";
+import { GlobalProvider } from "../components/globalcontext";
 import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { dbGetChatRooms } from "@/lib/server/db";
 import Navigation from "./navigation";

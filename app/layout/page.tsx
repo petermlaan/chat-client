@@ -1,6 +1,6 @@
 "use client"
 import styles from "./page.module.css"
-import { useGlobalContext } from "../../components/layoutcontext"
+import { useGlobalContext } from "../../components/globalcontext"
 import { Layout, Split } from "@/lib/interfaces"
 import { MouseEvent as ReactMouseEvent, SyntheticEvent, useState } from "react"
 import { query, queryInput, queryTextArea } from "@/lib/util"

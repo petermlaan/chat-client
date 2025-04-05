@@ -4,6 +4,7 @@ import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 import { useUser } from '@clerk/nextjs';
+import { useGlobalContext } from './globalcontext';
 
 const spam = [
     "SPAM!!!",
@@ -59,68 +60,29 @@ export function ChatProvider({
 }: {
     children: React.ReactNode
 }) {
+    function onMessage(msg: Msg) {
+        if (msg.type === 0)
+            setMessages(prev => {
+                const newList = prev.length > 150 ? prev.slice(0, 100) : prev
+                return [msg, ...newList]
+            })
+        else if (msg.type === 1 || msg.type === 2)
+            setMessages(prev => {
+                msg.msg = (msg.type === 1 ? "<joined" : "<left") + " the channel>"
+                return [msg, ...prev]
+            })
+    }
     function joinRoom(roomNo: number) {
-        function onConnect() {
-            console.log("onConnect")
-            setIsConnected(true)
-            if (s) {
-                setTransport(s.io.engine.transport.name)
-                s.io.engine.on("upgrade", transport => setTransport(transport.name))
-            }
-        }
-        function onDisconnect() {
-            console.log("onDisconnect")
-            setIsConnected(false)
-            setTransport("")
-            setRoom(-1)
-            endSpam()
-        }
+        console.log("joinRoom: " + roomNo)
         endSpam()
-        disconnect(socket)
         setRoom(roomNo)
         setMessages([])
+        console.log("joinRoom2: " + roomNo)
         if (roomNo < 0)
             return
-        if (!usr.isLoaded || !usr.isSignedIn || !usr.user) {
-            window.alert("You have to sign in before you can join a chat room")
-            return
-        }
-        const s = io("ws://localhost:808" + roomNo, { auth: { token: usr.user.username } })
-        setSocket(s)
-        if (s) {
-            s.on("connect", onConnect)
-            s.on("disconnect", onDisconnect)
-            s.on("message", e => {
-                const msgs: Msg[] = e
-                for (const msg of msgs) {
-                    if (msg.type === 0)
-                        setMessages(prev => {
-                            const newList = prev.length > 150 ? prev.slice(0, 100) : prev
-                            return [msg, ...newList]
-                        })
-                    else if (msg.type === 1 || msg.type === 2)
-                        setMessages(prev => {
-                            msg.msg = (msg.type === 1 ? "<joined" : "<left") + " the channel>"
-                            return [msg, ...prev]
-                        })
-                }
-            })
-        }
-    }
-    function disconnect(s: Socket | null) {
-        if (s && s.connected) {
-            s.disconnect()
-            s.off("connect")
-            s.off("disconnect")
-            s.off("message")
-        }
     }
     function sendMsg(msg: string) {
-        if (!socket || !socket.connected) {
-            console.log("useChat: trying to send msg on null or closed socket", msg, socket)
-            return
-        }
-        socket.emit("message", msg)
+        gc.sendMsg(clientId, msg)
     }
     function startSpam() {
         if (spamId > -1)
@@ -139,19 +101,15 @@ export function ChatProvider({
         }
     }
 
-    const [socket, setSocket] = useState<Socket | null>(null)
-    const [isConnected, setIsConnected] = useState(false)
-    const [transport, setTransport] = useState("")
     const [messages, setMessages] = useState<Msg[]>([])
     const [room, setRoom] = useState(-1)
     const [spamId, setSpamId] = useState(-1)
-    const usr = useUser()
+    const [clientId, setClientId] = useState(-1)
+    const gc = useGlobalContext()
 
     useEffect(() => {
-        return () => disconnect(socket)
-    }, [socket])
+        setClientId(gc.registerClient(onMessage))
 
-    useEffect(() => {
         return () => endSpam(spamId)
     }, [spamId])
 

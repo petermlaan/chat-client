@@ -1,10 +1,15 @@
 "use client"
-import { MouseEvent as ReactMouseEvent } from "react"
+import { MouseEvent as ReactMouseEvent, useEffect } from "react"
 import { useChatContext } from "../components/chatcontext"
 import { query } from "@/lib/util"
-import { useGlobalContext } from "../components/layoutcontext"
+import { useGlobalContext } from "../components/globalcontext"
+import { useUser } from "@clerk/nextjs"
 
-export default function Rooms() {
+export default function Rooms({
+    roomId
+}: {
+    roomId: number
+}) {
     function onBtnConnect(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         if (cc.isConnected) {
             cc.joinRoom(-1)
@@ -19,9 +24,22 @@ export default function Rooms() {
 
     const cc = useChatContext()
     const gc = useGlobalContext()
+    const { isLoaded } = useUser();
+
+    useEffect(() => {
+        console.log("useEffect: " + roomId)
+        if (isLoaded) {
+            console.log("useEffect - joining room: " + roomId)
+            cc.joinRoom(roomId)
+        }
+        return () => {
+            console.log("useEffect cleanup")
+            cc.joinRoom(-1)
+        }
+    }, [roomId, isLoaded])
 
     return (<div className="flexcent">
-        <select id="room" onChange={(e) => cc.joinRoom(+e.target.value)}>
+        <select id="room" defaultValue={roomId} onChange={(e) => cc.joinRoom(+e.target.value)}>
             <option value={-1}>Chat room</option>
             {gc.rooms.map(r =>
                 <option value={r.id} key={r.id}>{r.name}</option>)}
