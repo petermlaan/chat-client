@@ -14,14 +14,11 @@ export default function Rooms({
     const cc = useChatContext()
 
     useEffect(() => {
-        console.log("Rooms useEffect isLoaded: " + isLoaded)
-        if (isLoaded && cc.clientId > -1) {
-            console.log("Rooms useEffect roomId: " + roomId)
+        if (isLoaded && cc.clientId > -1 && gc.isConnected) {
             cc.joinRoom(roomId)
         }
 
         return () => {
-            console.log("Rooms useEffect cleanup")
             cc.joinRoom(-1)
         }
     }, [roomId, isLoaded, cc.clientId, gc.isConnected])

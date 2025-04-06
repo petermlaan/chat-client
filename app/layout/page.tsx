@@ -22,8 +22,7 @@ export default function LayoutPage() {
         }
     }
     function onSelect(e: SyntheticEvent<HTMLSelectElement, Event>) {
-        const sel = gc.layouts.layouts.find(l => +e.currentTarget.value === l.id)
-        console.log("LayoutPage onSelect: ", sel)
+        const sel = gc.layouts.find(l => +e.currentTarget.value === l.id)
         render(sel ?? null)
         setSelLayout(sel ?? null)
     }
@@ -39,7 +38,6 @@ export default function LayoutPage() {
         gc.setLayout(selLayout?.id ?? null)
     }
     function onDelete(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        console.log("onDelete: ", selLayout)
         if (selLayout) {
             gc.deleteLayout(selLayout.id)
             const node = query("#layouts", e.currentTarget) as HTMLSelectElement
@@ -50,14 +48,12 @@ export default function LayoutPage() {
         }
     }
     function onReset() {
-        console.log("onReset")
         if (window.confirm("Are you sure you want to DELETE ALL layouts and restore the default ones?")) {
             gc.resetDefaults()
             render(null)
         }
     }
     function render(selLayout: Layout | null) {
-        console.log("LayoutPage render: ", selLayout)
         const nameNode = document.querySelector("#name") as HTMLInputElement
         nameNode.value = selLayout?.name ?? ""
         const layoutNode = document.querySelector("#layout") as HTMLTextAreaElement
@@ -73,7 +69,7 @@ export default function LayoutPage() {
             <div className="flexcent">
                 <select onChange={onSelect} id="layouts">
                     <option>Layouts...</option>
-                    {gc.layouts.layouts.map((l, i) =>
+                    {gc.layouts.map((l, i) =>
                         <option value={l.id} key={i}>{l.name}</option>
                     )}
                 </select>

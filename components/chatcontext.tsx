@@ -64,12 +64,12 @@ export function ChatProvider({
         })
     }
     function joinRoom(roomId: number) {
-        console.log("CC joinRoom", {roomId, clientId})
         endSpam()
-        setRoom(roomId)
         setMessages([])
-        if (clientId > -1)
+        if (clientId > -1) {
+            setRoom(roomId)
             gc.joinRoom(clientId, roomId)
+        }
     }
     function sendMsg(msg: string) {
         gc.sendMsg(clientId, msg)
@@ -98,9 +98,15 @@ export function ChatProvider({
     const gc = useGlobalContext()
 
     useEffect(() => {
+        setClientId(prev => {
+            gc.unregisterClient(prev)
+            return prev
+        })
+        gc.unregisterClient(clientId)
         setClientId(gc.registerClient(onMessage))
 
         return () => {
+            gc.unregisterClient(clientId)
             setClientId(prev => {
                 gc.unregisterClient(prev)
                 return prev
