@@ -8,7 +8,7 @@ export default function Splitter({
     layout: Split | undefined
 }) {
     return (<>
-        {layout ?
+        {layout?.percent ?
             <div className={styles.cont}
                 style={layout.vertical ?
                     { gridTemplateRows: layout.percent + "% " + (100 - layout.percent) + "%" } :
@@ -16,6 +16,6 @@ export default function Splitter({
                 <Splitter layout={layout.child1} />
                 <Splitter layout={layout.child2} />
             </div> :
-            <ChatRoomCont />}
+            <ChatRoomCont roomId={layout?.roomId ?? -1} />}
     </>)
 }

@@ -1,11 +1,15 @@
 "use client"
 import { KeyboardEvent, MouseEvent as ReactMouseEvent } from "react"
-import { useChatContext } from "../components/chatcontext"
 import styles from "./chatroom.module.css"
-import Rooms from "./rooms"
+import { useChatContext } from "../components/chatcontext"
 import { query } from "@/lib/util"
+import Rooms from "./rooms"
 
-export default function ChatRoom() {
+export default function ChatRoom({
+    roomId
+}: {
+    roomId: number
+}) {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         const node = query(".msgtxt", e.currentTarget)
         sendMsg(node)
@@ -39,11 +43,11 @@ export default function ChatRoom() {
         <div className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.messages.map((m, i) =>
-                    <div className={styles.msg} key={i}>{m.user + ": " + m.msg}</div>
+                    <div className={styles.msg} key={i}>{m.user + ": " + m.message}</div>
                 )}
             </div>
             <div className={styles.ctrl}>
-                <Rooms />
+                <Rooms roomId={roomId} />
                 <button onClick={onBtnSpam} className="imgbtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                         viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}
@@ -63,7 +67,6 @@ export default function ChatRoom() {
                         </svg>
                     </button>
                 </div>
-                <span>{cc.transport}</span>
             </div>
         </div>
     )

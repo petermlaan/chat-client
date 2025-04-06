@@ -1,5 +1,5 @@
 "use client"
-import { useGlobalContext } from "@/components/layoutcontext"
+import { useGlobalContext } from "@/components/globalcontext"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MouseEvent as ReactMouseEvent } from "react"

@@ -1,5 +1,5 @@
 "use client"
-import { useGlobalContext } from "../components/layoutcontext"
+import { useGlobalContext } from "../components/globalcontext"
 import Splitter from "./splitter"
 
 export default function PageC() {

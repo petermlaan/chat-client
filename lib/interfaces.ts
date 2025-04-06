@@ -1,13 +1,14 @@
 export interface Msg {
-    chatroom_id: number;
-    type: number; // 0 - message, 1 - user joined, 2  - user left
+    room_id: number;
     user: string;
-    msg: string;
+    message: string;
+    save: boolean; // not used on the client
 }
 
 export interface Split {
-    percent: number,
-    vertical: boolean
+    percent?: number,
+    vertical?: boolean
+    roomId?: number,
     child1?: Split,
     child2?: Split
 }

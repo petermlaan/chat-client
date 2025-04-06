@@ -1,10 +1,14 @@
 import { ChatProvider } from "../components/chatcontext";
 import ChatRoom from "./chatroom";
 
-export default function ChatRoomCont() {
+export default function ChatRoomCont({
+  roomId
+}: {
+  roomId: number
+}) {
   return (
     <ChatProvider>
-      <ChatRoom />
+      <ChatRoom roomId={roomId} />
     </ChatProvider>
   )
 }
