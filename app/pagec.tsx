@@ -3,9 +3,9 @@ import { useGlobalContext } from "../components/globalcontext"
 import Splitter from "./splitter"
 
 export default function PageC() {
-    const lc = useGlobalContext()
+    const gc = useGlobalContext()
 
     return (<main>
-            <Splitter layout={lc.layout?.layout} />
+            <Splitter layout={gc.layout?.layout} />
     </main>)
 }

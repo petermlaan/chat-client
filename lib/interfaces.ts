@@ -18,6 +18,7 @@ export interface Layout {
     name: string,
     layout?: Split,
 }
+
 export interface ChatRoom {
     id: number
     name: string

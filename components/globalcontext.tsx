@@ -4,10 +4,11 @@ import { Layout, Msg } from '@/lib/interfaces';
 import { ChatRoom } from "@/lib/interfaces";
 import { io, Socket } from 'socket.io-client';
 import { useUser } from '@clerk/nextjs';
-import { LS } from '@/lib/constants';
+import { LS_LAYOUTS } from '@/lib/constants';
+import { LS_SEL_LAYOUT } from '@/lib/constants';
 
 interface GlobalContextType {
-  layouts: Layouts,
+  layouts: Layout[],
   layout: Layout | null,
   rooms: ChatRoom[],
   isConnected: boolean,
@@ -23,59 +24,51 @@ interface GlobalContextType {
   sendMsg: (clientId: number, message: string) => void
 }
 
-interface Layouts {
-  layouts: Layout[],
-  selected: number | null,
-}
-
 interface Client {
   clientId: number;
   roomId: number;
   onMessage: (msg: Msg) => void;
 }
 
-const defaultLayouts: Layouts = {
-  selected: 0,
-  layouts: [
-    {
-      id: 0,
-      name: "One",
-      layout: { roomId: 1 }
-    },
-    {
-      id: 1,
-      name: "Two Horizontal",
-      layout: { vertical: false, percent: 50 }
-    },
-    {
-      id: 2,
-      name: "Two Vertical",
-      layout: { vertical: true, percent: 50 }
-    },
-    {
-      id: 3,
-      name: "Three",
-      layout: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
-    },
-    {
-      id: 4,
-      name: "Four",
-      layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50 }, child2: { vertical: false, percent: 50 } }
-    },
-    {
-      id: 5,
-      name: "Six",
-      layout: {
-        vertical: false, percent: 67, child1: {
-          vertical: false, percent: 50,
-          child1: { vertical: true, percent: 50 },
-          child2: { vertical: true, percent: 50 }
-        },
+const defaultLayouts: Layout[] = [
+  {
+    id: 0,
+    name: "One",
+    layout: { roomId: 0 }
+  },
+  {
+    id: 1,
+    name: "Two Horizontal",
+    layout: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }
+  },
+  {
+    id: 2,
+    name: "Two Vertical",
+    layout: { vertical: true, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } }
+  },
+  {
+    id: 3,
+    name: "Three",
+    layout: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
+  },
+  {
+    id: 4,
+    name: "Four",
+    layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }, child2: { vertical: false, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } } }
+  },
+  {
+    id: 5,
+    name: "Six",
+    layout: {
+      vertical: false, percent: 67, child1: {
+        vertical: false, percent: 50,
+        child1: { vertical: true, percent: 50 },
         child2: { vertical: true, percent: 50 }
-      }
-    },
-  ]
-}
+      },
+      child2: { vertical: true, percent: 50 }
+    }
+  },
+]
 
 const globalContext = createContext<GlobalContextType | undefined>(undefined);
 let clients: Client[] = []
@@ -89,64 +82,58 @@ export function GlobalProvider({
 }) {
   // Functions exposed on the context
   function setLayout(layoutId: number | null) {
-    console.log("GC - setLayout: " + layoutId)
     setStateLayout(prev => {
       if (prev)
-        return layouts?.layouts?.find(l => l.id === layoutId) ?? null
+        return layouts?.find(l => l.id === layoutId) ?? null
       return null
     })
-    setLayouts(prev => {
-      const ls: Layouts = { ...prev, selected: layoutId }
-      storeInLS(ls)
-      return ls
-    })
+    storeSelLayoutInLS(layoutId)
   }
   function deleteLayout(layoutId: number) {
-    console.log("GC - deleteLayout: " + layoutId)
     setStateLayout(prev => {
-      if (prev && prev.id === layoutId)
+      if (prev && prev.id === layoutId) {
+        storeSelLayoutInLS(null)
         return null
-      else
+      } else
         return prev
     })
     setLayouts(prev => {
-      const ls: Layouts = {
-        layouts: prev.layouts.filter(l => l.id !== layoutId),
-        selected: prev.selected
-      }
-      storeInLS(ls)
+      const ls: Layout[] = prev.filter(l => l.id !== layoutId)
+      storeLayoutsInLS(ls)
       return ls
     })
   }
   function createLayout(name: string, layout: string) {
     const newLayout: Layout = {
+      id: layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
       name,
       layout: JSON.parse(layout),
-      id: layouts.layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
     }
     setLayouts(prev => {
-      const newList = { ...prev, layouts: [...prev.layouts, newLayout] }
-      storeInLS(newList)
+      const newList = [...prev, newLayout]
+      storeLayoutsInLS(newList)
       return newList
     })
   }
   function saveLayout(layout: Layout) {
-    const newList = [...layouts.layouts]
+    const newList = [...layouts]
     const index = newList.findIndex(l => l.id === layout.id)
     if (index > -1)
       newList[index] = layout
-    const newLayout: Layouts = { layouts: newList, selected: layouts.selected }
-    setLayouts(newLayout)
-    storeInLS(newLayout)
+    setLayouts(newList)
+    storeLayoutsInLS(newList)
   }
   function registerClient(onMessage: (msg: Msg) => void) {
-    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
     const newId = clients.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
+    console.log("registerClient newId: " + newId)
     clients.push({ clientId: newId, roomId: -1, onMessage })
+    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
     return newId
   }
   function unregisterClient(clientId: number) {
+    console.log("unregisterClient clientId: " + clientId)
     clients = clients.filter(c => c.clientId !== clientId)
+    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
@@ -173,15 +160,16 @@ export function GlobalProvider({
       // Join new room
       socket.emit("join", createMsg(roomId, ""))
     }
+    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
     if (roomId < 0) {
-      console.error("GC sendMsg: room -1")
+      console.log("GC sendMsg: room -1")
       return
     }
     if (!socket || !socket.connected) {
-      console.error("GC sendMsg: no socket or no connection", socket)
+      console.log("GC sendMsg: no socket or no connection", socket)
       return
     }
     socket.emit("message", createMsg(roomId, message))
@@ -207,7 +195,6 @@ export function GlobalProvider({
     })
   }
   function onLeft(data: unknown) {
-    console.log("GC onLeft", data)
     const msg = data as Msg
     msg.message = "<" + msg.user + " has left>"
     clients.forEach(c => {
@@ -238,12 +225,58 @@ export function GlobalProvider({
     return msg
   }
   function storeDefaultLayouts() {
-    storeInLS(defaultLayouts)
+    storeLayoutsInLS(defaultLayouts)
+    storeSelLayoutInLS(0)
     setLayouts(defaultLayouts)
-    setStateLayout(defaultLayouts.layouts[0])
+    setStateLayout(defaultLayouts[0])
   }
-  function storeInLS(lso: Layouts) {
-    localStorage.setItem(LS, JSON.stringify(lso))
+  function storeLayoutsInLS(lso: Layout[]) {
+    localStorage.setItem(LS_LAYOUTS, JSON.stringify(lso))
+  }
+  function storeSelLayoutInLS(selLayout: number | null) {
+    localStorage.setItem(LS_SEL_LAYOUT, JSON.stringify(selLayout))
+  }
+  function getLayoutsFromLS() {
+    const lsi = localStorage.getItem(LS_LAYOUTS)
+    if (!lsi) {
+      storeDefaultLayouts()
+      return defaultLayouts
+    }
+    let lso: Layout[]
+    try {
+      lso = JSON.parse(lsi)
+    } catch (err) {
+      console.error("Failed to parse: ", lsi, err)
+      storeDefaultLayouts()
+      return defaultLayouts
+    }
+    if (!lso) {
+      console.log("localStorage object empty, storing default layouts instead")
+      storeDefaultLayouts()
+      return defaultLayouts
+    }
+    return lso
+  }
+  function getSelLayoutFromLS() {
+    const lsi = localStorage.getItem(LS_SEL_LAYOUT)
+    if (!lsi) {
+      storeSelLayoutInLS(0)
+      return 0
+    }
+    let lso: number | null
+    try {
+      lso = JSON.parse(lsi)
+    } catch (err) {
+      console.error("Failed to parse: ", lsi, err)
+      storeSelLayoutInLS(0)
+      return 0
+    }
+    if (lso === undefined) {
+      console.log("localStorage object empty, storing 0")
+      storeSelLayoutInLS(0)
+      return 0
+    }
+    return lso
   }
   function getClient(clientId: number) {
     const client = clients.find(c => c.clientId === clientId)
@@ -252,7 +285,7 @@ export function GlobalProvider({
     return client
   }
 
-  const [layouts, setLayouts] = useState<Layouts>({ layouts: [], selected: null })
+  const [layouts, setLayouts] = useState<Layout[]>([])
   const [layout, setStateLayout] = useState<Layout | null>(null)
   const [rooms, setRooms] = useState<ChatRoom[]>([])
   const [socket, setSocket] = useState<Socket | undefined>()
@@ -262,34 +295,16 @@ export function GlobalProvider({
 
   useEffect(() => {
     setRooms(chatRooms)
-    const lsi = localStorage.getItem(LS)
-    if (!lsi) {
-      storeDefaultLayouts()
-      return
-    }
-    let lso: Layouts
-    try {
-      lso = JSON.parse(lsi)
-    } catch (err) {
-      console.error("Failed to parse: ", lsi, err)
-      storeDefaultLayouts()
-      return
-    }
-    if (!lso) {
-      console.log("localStorage object empty, storing default layouts instead")
-      storeDefaultLayouts()
-      return
-    }
+    const lso = getLayoutsFromLS()
     setLayouts(lso)
-    const selectedLayout = lso.layouts.find(l => l.id === lso.selected)
-    console.log("GC useEffect chatRooms: ", lso, selectedLayout)
+    const sel = getSelLayoutFromLS()
+    const selectedLayout = lso.find(l => l.id === sel)
     if (selectedLayout) {
       setStateLayout(selectedLayout)
     }
   }, [chatRooms])
 
   useEffect(() => {
-    console.log("GC useEffect user: ", usr, socket)
     if (usr.user && usr.isLoaded && usr.isSignedIn && !socket) {
       console.log("GC useEffect user - creating socket...")
       const s = io("ws://localhost:8080", { auth: { token: usr.user?.username }, })
@@ -301,15 +316,15 @@ export function GlobalProvider({
       setSocket(s)
     }
 
-    return () => {
-      console.log("GC useEffect user cleanup")
-      if (socket) {
-        console.log("GC useEffect cleanup user - disconnecting...")
-        socket.removeAllListeners()
-        socket.disconnect()
-        setSocket(undefined)
-      }
-    }
+    /*     return () => {
+          console.log("GC useEffect user cleanup")
+          if (socket) {
+            console.log("GC useEffect cleanup user - disconnecting...")
+            socket.removeAllListeners()
+            socket.disconnect()
+            setSocket(undefined)
+          }
+        } */
   }, [usr])
 
   return (
