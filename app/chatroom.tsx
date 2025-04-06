@@ -1,10 +1,9 @@
 "use client"
 import { KeyboardEvent, MouseEvent as ReactMouseEvent } from "react"
-import { useChatContext } from "../components/chatcontext"
 import styles from "./chatroom.module.css"
-import Rooms from "./rooms"
+import { useChatContext } from "../components/chatcontext"
 import { query } from "@/lib/util"
-import { useGlobalContext } from "@/components/globalcontext"
+import Rooms from "./rooms"
 
 export default function ChatRoom({
     roomId

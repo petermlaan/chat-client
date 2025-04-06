@@ -93,16 +93,19 @@ export function ChatProvider({
     }
 
     const [messages, setMessages] = useState<Msg[]>([])
-    const [roomId, setRoom] = useState(-1)
-    const [spamId, setSpamId] = useState(-1)
     const [clientId, setClientId] = useState(-1)
+    const [spamId, setSpamId] = useState(-1)
+    const [roomId, setRoom] = useState(-1)
     const gc = useGlobalContext()
 
     useEffect(() => {
         setClientId(gc.registerClient(onMessage))
 
         return () => {
-            gc.unregisterClient(clientId)
+            setClientId(prev => {
+                gc.unregisterClient(prev)
+                return prev
+            })
         }
     }, [])
 

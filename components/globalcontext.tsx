@@ -4,7 +4,7 @@ import { Layout, Msg } from '@/lib/interfaces';
 import { ChatRoom } from "@/lib/interfaces";
 import { io, Socket } from 'socket.io-client';
 import { useUser } from '@clerk/nextjs';
-import { SS_CLIENTS, LS } from '@/lib/constants';
+import { LS } from '@/lib/constants';
 
 interface GlobalContextType {
   layouts: Layouts,
@@ -140,13 +140,12 @@ export function GlobalProvider({
     storeInLS(newLayout)
   }
   function registerClient(onMessage: (msg: Msg) => void) {
+    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
     const newId = clients.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
-    console.log("GC registerClient", newId, onMessage, clients)
     clients.push({ clientId: newId, roomId: -1, onMessage })
     return newId
   }
   function unregisterClient(clientId: number) {
-    console.log("GC unregisterClient", clientId, clients)
     clients = clients.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
@@ -158,7 +157,7 @@ export function GlobalProvider({
     if (client.roomId === -1 && roomId === -1)
       return
     if (!socket) {
-      console.error("GC joinRoom: no socket", { clientId, roomId });
+      console.log("GC joinRoom: NO SOCKET!", { clientId, roomId });
       return
     }
     if (client.roomId > -1) {
@@ -189,7 +188,6 @@ export function GlobalProvider({
   // Other functions
   function onMessage(data: any) {
     const msgs = data as Msg[]
-    console.log("GC onMessage", clients, msgs)
     msgs.forEach(msg => {
       clients.forEach(c => {
         if (c.roomId === msg.room_id) {
@@ -199,8 +197,8 @@ export function GlobalProvider({
     })
   }
   function onJoined(data: any) {
-    console.log("GC onJoined", data)
     const msg = data as Msg
+    msg.message = "<" + msg.user + " has joined>"
     clients.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
@@ -209,6 +207,7 @@ export function GlobalProvider({
   function onLeft(data: any) {
     console.log("GC onLeft", data)
     const msg = data as Msg
+    msg.message = "<" + msg.user + " has left>"
     clients.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
@@ -291,17 +290,19 @@ export function GlobalProvider({
     }
     setLayouts(lso)
     const selectedLayout = lso.layouts.find(l => l.id === lso.selected)
-    console.log("GC - useEffect: ", lso, selectedLayout)
+    console.log("GC useEffect chatRooms: ", lso, selectedLayout)
     if (selectedLayout) {
       setStateLayout(selectedLayout)
     }
   }, [chatRooms])
 
   useEffect(() => {
+    console.log("GC useEffect user: ", usr, socket)
     if (usr.user && usr.isLoaded && usr.isSignedIn && !socket) {
+      console.log("GC useEffect user - creating socket...")
       const s = io("ws://localhost:8080", { auth: { token: usr.user?.username }, })
-      s.on("connect", onConnect)
       s.on("disconnect", onDisconnect)
+      s.on("connect", onConnect)
       s.on("message", onMessage)
       s.on("joined", onJoined)
       s.on("left", onLeft)
@@ -309,7 +310,9 @@ export function GlobalProvider({
     }
 
     return () => {
+      console.log("GC useEffect user cleanup")
       if (socket) {
+        console.log("GC useEffect cleanup user - disconnecting...")
         socket.removeAllListeners()
         socket.disconnect()
         setSocket(undefined)
