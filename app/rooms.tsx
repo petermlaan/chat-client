@@ -1,7 +1,6 @@
 "use client"
-import { MouseEvent as ReactMouseEvent, useEffect } from "react"
+import { useEffect } from "react"
 import { useChatContext } from "../components/chatcontext"
-import { query } from "@/lib/util"
 import { useGlobalContext } from "../components/globalcontext"
 import { useUser } from "@clerk/nextjs"
 

@@ -1,9 +1,7 @@
 "use client"
 import { createContext, useContext, useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
-import { useUser } from '@clerk/nextjs';
 import { useGlobalContext } from './globalcontext';
 
 const spam = [

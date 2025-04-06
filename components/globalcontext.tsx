@@ -152,8 +152,10 @@ export function GlobalProvider({
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
     const client = clients.find(c => c.clientId === clientId)
-    if (!client)
-      throw new Error("Found no client with clientId: " + clientId)
+    if (!client) {
+      console.log("Found no client with clientId: " + clientId)
+      return
+    }
     if (client.roomId === -1 && roomId === -1)
       return
     if (!socket) {
@@ -186,7 +188,7 @@ export function GlobalProvider({
   }
 
   // Other functions
-  function onMessage(data: any) {
+  function onMessage(data: unknown) {
     const msgs = data as Msg[]
     msgs.forEach(msg => {
       clients.forEach(c => {
@@ -196,7 +198,7 @@ export function GlobalProvider({
       })
     })
   }
-  function onJoined(data: any) {
+  function onJoined(data: unknown) {
     const msg = data as Msg
     msg.message = "<" + msg.user + " has joined>"
     clients.forEach(c => {
@@ -204,7 +206,7 @@ export function GlobalProvider({
         c.onMessage(msg)
     })
   }
-  function onLeft(data: any) {
+  function onLeft(data: unknown) {
     console.log("GC onLeft", data)
     const msg = data as Msg
     msg.message = "<" + msg.user + " has left>"
@@ -225,16 +227,6 @@ export function GlobalProvider({
     console.log("onDisconnect")
     setIsConnected(false)
     setTransport("")
-  }
-  function disconnect() {
-    console.log("disconnect: ", socket)
-    if (socket && socket.connected) {
-      console.log("disconnecting...")
-      socket.disconnect()
-      socket.off("connect")
-      socket.off("disconnect")
-      socket.off("message")
-    }
   }
   function createMsg(roomId: number, message: string) {
     const msg: Msg = {
@@ -318,7 +310,7 @@ export function GlobalProvider({
         setSocket(undefined)
       }
     }
-  }, [usr.user])
+  }, [usr])
 
   return (
     <globalContext.Provider value={{
@@ -339,3 +331,15 @@ export function useGlobalContext() {
   }
   return context;
 }
+
+
+/*   function disconnect() {
+    console.log("disconnect: ", socket)
+    if (socket && socket.connected) {
+      console.log("disconnecting...")
+      socket.disconnect()
+      socket.off("connect")
+      socket.off("disconnect")
+      socket.off("message")
+    }
+  }*/
