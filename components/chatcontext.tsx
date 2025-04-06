@@ -40,6 +40,7 @@ const spam = [
 ]
 
 interface ChatContextType {
+    clientId: number,
     messages: Msg[],
     joinRoom: (roomNo: number) => void,
     sendMsg: (m: string) => void,
@@ -63,7 +64,7 @@ export function ChatProvider({
         })
     }
     function joinRoom(roomId: number) {
-        console.log("joinRoom: " + roomId)
+        console.log("CC joinRoom", {roomId, clientId})
         endSpam()
         setRoom(roomId)
         setMessages([])
@@ -115,7 +116,7 @@ export function ChatProvider({
 
     return (
         <ChatContext.Provider value={{
-            messages, joinRoom, sendMsg, room: roomId, isSpamming: spamId > -1, startSpam, endSpam
+            clientId, messages, joinRoom, sendMsg, room: roomId, isSpamming: spamId > -1, startSpam, endSpam
         }}>
             {children}
         </ChatContext.Provider>

@@ -14,20 +14,25 @@ export default function Rooms({
     const cc = useChatContext()
 
     useEffect(() => {
-        if (isLoaded) {
+        console.log("Rooms useEffect isLoaded: " + isLoaded)
+        if (isLoaded && cc.clientId > -1) {
+            console.log("Rooms useEffect roomId: " + roomId)
             cc.joinRoom(roomId)
         }
-        
+
         return () => {
+            console.log("Rooms useEffect cleanup")
             cc.joinRoom(-1)
         }
-    }, [roomId, isLoaded])
+    }, [roomId, isLoaded, cc.clientId, gc.isConnected])
 
-    return (<div className="flexcent">
-        <select id="room" defaultValue={roomId} onChange={(e) => cc.joinRoom(+e.target.value)}>
-            <option value={-1}>Chat room</option>
-            {gc.rooms.map(r =>
-                <option value={r.id} key={r.id}>{r.name}</option>)}
-        </select>
-    </div>)
+    return (
+        <div className="flexcent">
+            <select id="room" defaultValue={roomId} onChange={(e) => cc.joinRoom(+e.target.value)}>
+                <option value={-1}>Chat room</option>
+                {gc.rooms.map(r =>
+                    <option value={r.id} key={r.id}>{r.name}</option>)}
+            </select>
+        </div>
+    )
 }

@@ -40,17 +40,17 @@ const defaultLayouts: Layouts = {
     {
       id: 0,
       name: "One",
-      layout: { roomId: 1 }
+      layout: { roomId: 0 }
     },
     {
       id: 1,
       name: "Two Horizontal",
-      layout: { vertical: false, percent: 50 }
+      layout: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }
     },
     {
       id: 2,
       name: "Two Vertical",
-      layout: { vertical: true, percent: 50 }
+      layout: { vertical: true, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } }
     },
     {
       id: 3,
@@ -60,7 +60,7 @@ const defaultLayouts: Layouts = {
     {
       id: 4,
       name: "Four",
-      layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50 }, child2: { vertical: false, percent: 50 } }
+      layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }, child2: { vertical: false, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } } }
     },
     {
       id: 5,
@@ -140,17 +140,21 @@ export function GlobalProvider({
     storeInLS(newLayout)
   }
   function registerClient(onMessage: (msg: Msg) => void) {
-    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
     const newId = clients.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
+    console.log("registerClient newId: " + newId)
     clients.push({ clientId: newId, roomId: -1, onMessage })
+    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
     return newId
   }
   function unregisterClient(clientId: number) {
+    console.log("unregisterClient clientId: " + clientId)
     clients = clients.filter(c => c.clientId !== clientId)
+    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
+    console.log("joinRoom", {clientId, roomId})
     const client = clients.find(c => c.clientId === clientId)
     if (!client) {
       console.log("Found no client with clientId: " + clientId)
@@ -173,6 +177,7 @@ export function GlobalProvider({
       // Join new room
       socket.emit("join", createMsg(roomId, ""))
     }
+    clients.forEach(c => {console.log("GC registerClient client: " + c.clientId + " - " + c.roomId)})
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
@@ -301,7 +306,7 @@ export function GlobalProvider({
       setSocket(s)
     }
 
-    return () => {
+/*     return () => {
       console.log("GC useEffect user cleanup")
       if (socket) {
         console.log("GC useEffect cleanup user - disconnecting...")
@@ -309,7 +314,7 @@ export function GlobalProvider({
         socket.disconnect()
         setSocket(undefined)
       }
-    }
+    } */
   }, [usr])
 
   return (
