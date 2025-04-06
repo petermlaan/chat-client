@@ -101,7 +101,15 @@ export function ChatProvider({
     useEffect(() => {
         setClientId(gc.registerClient(onMessage))
 
-        return () => endSpam(spamId)
+        return () => {
+            gc.unregisterClient(clientId)
+        }
+    }, [])
+
+    useEffect(() => {
+        return () => {
+            endSpam(spamId)
+        }
     }, [spamId])
 
     return (

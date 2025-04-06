@@ -4,6 +4,7 @@ import { Layout, Msg } from '@/lib/interfaces';
 import { ChatRoom } from "@/lib/interfaces";
 import { io, Socket } from 'socket.io-client';
 import { useUser } from '@clerk/nextjs';
+import { SS_CLIENTS, LS } from '@/lib/constants';
 
 interface GlobalContextType {
   layouts: Layouts,
@@ -17,6 +18,7 @@ interface GlobalContextType {
   saveLayout: (layout: Layout) => void,
   resetDefaults: () => void,
   registerClient: (onMessage: (msg: Msg) => void) => number,
+  unregisterClient: (clientId: number) => void,
   joinRoom: (clientId: number, roomId: number) => void,
   sendMsg: (clientId: number, message: string) => void
 }
@@ -76,6 +78,7 @@ const defaultLayouts: Layouts = {
 }
 
 const globalContext = createContext<GlobalContextType | undefined>(undefined);
+let clients: Client[] = []
 
 export function GlobalProvider({
   chatRooms,
@@ -138,17 +141,20 @@ export function GlobalProvider({
   }
   function registerClient(onMessage: (msg: Msg) => void) {
     const newId = clients.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
-    clients.push({
-      clientId: newId,
-      roomId: -1,
-      onMessage,
-    })
+    console.log("GC registerClient", newId, onMessage, clients)
+    clients.push({ clientId: newId, roomId: -1, onMessage })
     return newId
+  }
+  function unregisterClient(clientId: number) {
+    console.log("GC unregisterClient", clientId, clients)
+    clients = clients.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
-    const client = getClient(clientId)
+    const client = clients.find(c => c.clientId === clientId)
+    if (!client)
+      throw new Error("Found no client with clientId: " + clientId)
     if (client.roomId === -1 && roomId === -1)
       return
     if (!socket) {
@@ -183,12 +189,10 @@ export function GlobalProvider({
   // Other functions
   function onMessage(data: any) {
     const msgs = data as Msg[]
-    console.log("GC onMessage: ", data, msgs, clients)
+    console.log("GC onMessage", clients, msgs)
     msgs.forEach(msg => {
       clients.forEach(c => {
-        console.log("GC onMessage checking room: ", c.roomId, msg.room_id)
         if (c.roomId === msg.room_id) {
-          console.log("GC onMessage relaying: ", msgs)
           c.onMessage(msg)
         }
       })
@@ -233,12 +237,6 @@ export function GlobalProvider({
       socket.off("message")
     }
   }
-  function getClient(clientId: number) {
-    const client = clients.find(c => c.clientId === clientId)
-    if (!client)
-      throw new Error("Found no client with clientId: " + clientId)
-    return client
-  }
   function createMsg(roomId: number, message: string) {
     const msg: Msg = {
       user: usr.user?.username ?? "",
@@ -254,7 +252,13 @@ export function GlobalProvider({
     setStateLayout(defaultLayouts.layouts[0])
   }
   function storeInLS(lso: Layouts) {
-    localStorage.setItem("Chaticus", JSON.stringify(lso))
+    localStorage.setItem(LS, JSON.stringify(lso))
+  }
+  function getClient(clientId: number) {
+    const client = clients.find(c => c.clientId === clientId)
+    if (!client)
+      throw new Error("Found no client with clientId: " + clientId)
+    return client
   }
 
   const [layouts, setLayouts] = useState<Layouts>({ layouts: [], selected: null })
@@ -263,12 +267,11 @@ export function GlobalProvider({
   const [socket, setSocket] = useState<Socket | undefined>()
   const [isConnected, setIsConnected] = useState(false)
   const [transport, setTransport] = useState("N/A")
-  const [clients] = useState<Client[]>([])
   const usr = useUser()
 
   useEffect(() => {
     setRooms(chatRooms)
-    const lsi = localStorage.getItem("Chaticus")
+    const lsi = localStorage.getItem(LS)
     if (!lsi) {
       storeDefaultLayouts()
       return
@@ -319,7 +322,7 @@ export function GlobalProvider({
       layouts, layout, rooms, isConnected, transport,
       setLayout, deleteLayout, createLayout, saveLayout,
       resetDefaults: storeDefaultLayouts,
-      registerClient, joinRoom, sendMsg,
+      registerClient, unregisterClient, joinRoom, sendMsg,
     }}>
       {children}
     </globalContext.Provider>
