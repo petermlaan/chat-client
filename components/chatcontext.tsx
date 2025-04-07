@@ -1,5 +1,5 @@
 "use client"
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 import { useGlobalContext } from './globalcontext';
@@ -66,13 +66,13 @@ export function ChatProvider({
     function joinRoom(roomId: number) {
         endSpam()
         setMessages([])
-        if (clientId > -1) {
+        if (clientIdRef.current > -1) {
             setRoom(roomId)
-            gc.joinRoom(clientId, roomId)
+            gc.joinRoom(clientIdRef.current, roomId)
         }
     }
     function sendMsg(msg: string) {
-        gc.sendMsg(clientId, msg)
+        gc.sendMsg(clientIdRef.current, msg)
     }
     function startSpam() {
         if (spamId > -1)
@@ -92,25 +92,18 @@ export function ChatProvider({
     }
 
     const [messages, setMessages] = useState<Msg[]>([])
-    const [clientId, setClientId] = useState(-1)
     const [spamId, setSpamId] = useState(-1)
     const [roomId, setRoom] = useState(-1)
+    const clientIdRef = useRef(-1)
     const gc = useGlobalContext()
 
     useEffect(() => {
-        setClientId(prev => {
-            gc.unregisterClient(prev)
-            return prev
-        })
-        gc.unregisterClient(clientId)
-        setClientId(gc.registerClient(onMessage))
+        if (clientIdRef.current > -1)
+            gc.unregisterClient(clientIdRef.current)
+        clientIdRef.current = gc.registerClient(onMessage)
 
         return () => {
-            gc.unregisterClient(clientId)
-            setClientId(prev => {
-                gc.unregisterClient(prev)
-                return prev
-            })
+            gc.unregisterClient(clientIdRef.current)
         }
     }, [])
 
@@ -122,7 +115,7 @@ export function ChatProvider({
 
     return (
         <ChatContext.Provider value={{
-            clientId, messages, joinRoom, sendMsg, room: roomId, isSpamming: spamId > -1, startSpam, endSpam
+            clientId: clientIdRef.current, messages, joinRoom, sendMsg, room: roomId, isSpamming: spamId > -1, startSpam, endSpam
         }}>
             {children}
         </ChatContext.Provider>

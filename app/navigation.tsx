@@ -1,14 +1,9 @@
 "use client"
-import { useGlobalContext } from "@/components/globalcontext"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { MouseEvent as ReactMouseEvent } from "react"
+import { useGlobalContext } from "@/components/globalcontext"
 
 export default function Navigation() {
-  function onLayout(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-    gc.setLayout(+e.currentTarget.value)
-  }
-
   const gc = useGlobalContext()
 
   return (
@@ -22,7 +17,7 @@ export default function Navigation() {
         </Link>
         <div className="dropdown-content">
           {gc.layouts.map((l, i) =>
-            <button onClick={onLayout} value={l.id} key={i}>{l.name}</button>
+            <button onClick={(e) => gc.setLayout(+e.currentTarget.value)} value={l.id} key={i}>{l.name}</button>
           )}
         </div>
       </div>
