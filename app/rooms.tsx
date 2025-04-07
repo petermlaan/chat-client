@@ -25,7 +25,7 @@ export default function Rooms({
 
     return (
         <div className="flexcent">
-            <select id="room" defaultValue={roomId} onChange={(e) => cc.joinRoom(+e.target.value)}>
+            <select defaultValue={roomId} onChange={(e) => cc.joinRoom(+e.target.value)}>
                 <option value={-1}>Chat room</option>
                 {gc.rooms.map(r =>
                     <option value={r.id} key={r.id}>{r.name}</option>)}
