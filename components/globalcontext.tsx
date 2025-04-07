@@ -22,7 +22,9 @@ interface GlobalContextType {
   registerClient: (onMessage: (msg: Msg) => void) => number,
   unregisterClient: (clientId: number) => void,
   joinRoom: (clientId: number, roomId: number) => void,
-  sendMsg: (clientId: number, message: string) => void
+  sendMsg: (clientId: number, message: string) => void,
+  disconnect: () => void,
+  connect: () => void,
 }
 
 interface Client {
@@ -82,11 +84,7 @@ export function GlobalProvider({
 }) {
   // Functions exposed on the context
   function setLayout(layoutId: number | null) {
-    setStateLayout(prev => {
-      if (layouts)
-        return layouts.find(l => l.id === layoutId) ?? null
-      return null
-    })
+    setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
     setVersion(v => v + 1)
   }
@@ -172,6 +170,16 @@ export function GlobalProvider({
       return
     }
     socket.current.emit("message", createMsg(roomId, message))
+  }
+  function disconnect() {
+    console.log("disconnect: ", socket.current)
+    if (socket.current && socket.current.connected) {
+      console.log("disconnecting...")
+      socket.current.disconnect()
+    }
+  }
+  function connect() {
+    socket.current?.connect()
   }
 
   // Other functions
@@ -318,7 +326,7 @@ export function GlobalProvider({
   useEffect(() => {
     if (usr.user && usr.isLoaded && usr.isSignedIn && !socket.current) {
       console.log("GC useEffect user - creating socket...")
-      username.current = usr.user.username ?? ""
+      username.current = usr.user?.username ?? ""
       const s = io("ws://localhost:8080", { auth: { token: usr.user?.username }, })
       s.on("disconnect", onDisconnect)
       s.on("connect", onConnect)
@@ -343,8 +351,8 @@ export function GlobalProvider({
     <globalContext.Provider value={{
       layouts, layout, rooms, isConnected, transport, version,
       setLayout, deleteLayout, createLayout, saveLayout,
-      resetDefaults: storeDefaultLayouts,
-      registerClient, unregisterClient, joinRoom, sendMsg,
+      resetDefaults: storeDefaultLayouts, registerClient,
+      unregisterClient, joinRoom, sendMsg, disconnect, connect
     }}>
       {children}
     </globalContext.Provider>
@@ -358,15 +366,3 @@ export function useGlobalContext() {
   }
   return context;
 }
-
-
-/*   function disconnect() {
-    console.log("disconnect: ", socket)
-    if (socket && socket.connected) {
-      console.log("disconnecting...")
-      socket.disconnect()
-      socket.off("connect")
-      socket.off("disconnect")
-      socket.off("message")
-    }
-  }*/
