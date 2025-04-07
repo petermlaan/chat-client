@@ -131,7 +131,6 @@ export function GlobalProvider({
   }
   function unregisterClient(clientId: number) {
     const client = clients.current.find(c => c.clientId === clientId)
-    console.log("unregisterClient", clientId, client, socket)
     if (socket.current && client && client.roomId > -1)
       socket.current.emit("leave", createMsg(client.roomId, ""))
     clients.current = clients.current.filter(c => c.clientId !== clientId)
@@ -221,7 +220,6 @@ export function GlobalProvider({
     setTransport("")
   }
   function createMsg(roomId: number, message: string) {
-    console.log("GC createMsg usr", usr)
     const msg: Msg = {
       user: username.current,
       room_id: roomId,
