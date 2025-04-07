@@ -130,6 +130,9 @@ export function GlobalProvider({
     return newId
   }
   function unregisterClient(clientId: number) {
+    const client = clients.current.find(c => c.clientId === clientId)
+    if (socket.current && client && client.roomId > -1)
+      socket.current.emit("leave", createMsg(client.roomId, ""))
     clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
@@ -142,20 +145,20 @@ export function GlobalProvider({
     }
     if (client.roomId === -1 && roomId === -1)
       return
-    if (!socket) {
+    if (!socket.current) {
       console.log("GC joinRoom: NO SOCKET!", { clientId, roomId });
       return
     }
     if (client.roomId > -1) {
       // Leave old room
       console.log("GC joinRoom: leaving old room", { clientId, roomId });
-      socket.emit("leave", createMsg(client.roomId, ""))
+      socket.current.emit("leave", createMsg(client.roomId, ""))
     }
     client.roomId = roomId
     if (roomId > -1) {
       console.log("GC joinRoom: joining room", { clientId, roomId });
       // Join new room
-      socket.emit("join", createMsg(roomId, ""))
+      socket.current.emit("join", createMsg(roomId, ""))
     }
   }
   function sendMsg(clientId: number, message: string) {
@@ -164,11 +167,11 @@ export function GlobalProvider({
       console.log("GC sendMsg: room -1")
       return
     }
-    if (!socket || !socket.connected) {
+    if (!socket.current || !socket.current.connected) {
       console.log("GC sendMsg: no socket or no connection", socket)
       return
     }
-    socket.emit("message", createMsg(roomId, message))
+    socket.current.emit("message", createMsg(roomId, message))
   }
 
   // Other functions
@@ -206,9 +209,9 @@ export function GlobalProvider({
   function onConnect() {
     console.log("onConnect")
     setIsConnected(true)
-    if (socket) {
-      setTransport(socket.io.engine.transport.name)
-      socket.io.engine.on("upgrade", transport => setTransport(transport.name))
+    if (socket.current) {
+      setTransport(socket.current.io.engine.transport.name)
+      socket.current.io.engine.on("upgrade", transport => setTransport(transport.name))
     }
   }
   function onDisconnect() {
@@ -218,7 +221,7 @@ export function GlobalProvider({
   }
   function createMsg(roomId: number, message: string) {
     const msg: Msg = {
-      user: usr.user?.username ?? "",
+      user: username.current,
       room_id: roomId,
       message: message,
       save: true,
@@ -289,7 +292,6 @@ export function GlobalProvider({
   const [layouts, setLayouts] = useState<Layout[]>([])
   const [layout, setStateLayout] = useState<Layout | null>(null)
   const [rooms, setRooms] = useState<ChatRoom[]>([])
-  const [socket, setSocket] = useState<Socket | undefined>()
   const [isConnected, setIsConnected] = useState(false)
   const [transport, setTransport] = useState("N/A")
 
@@ -298,7 +300,9 @@ export function GlobalProvider({
   const [version, setVersion] = useState(0)
 
   const clients = useRef<Client[]>([])
+  const socket = useRef<Socket | undefined>(undefined)
   const usr = useUser()
+  const username = useRef("")
 
   useEffect(() => {
     setRooms(chatRooms)
@@ -312,15 +316,16 @@ export function GlobalProvider({
   }, [chatRooms])
 
   useEffect(() => {
-    if (usr.user && usr.isLoaded && usr.isSignedIn && !socket) {
+    if (usr.user && usr.isLoaded && usr.isSignedIn && !socket.current) {
       console.log("GC useEffect user - creating socket...")
+      username.current = usr.user.username ?? ""
       const s = io("ws://localhost:8080", { auth: { token: usr.user?.username }, })
       s.on("disconnect", onDisconnect)
       s.on("connect", onConnect)
       s.on("message", onMessage)
       s.on("joined", onJoined)
       s.on("left", onLeft)
-      setSocket(s)
+      socket.current = s
     }
 
     /*     return () => {
