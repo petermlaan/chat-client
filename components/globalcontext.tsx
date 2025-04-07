@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Layout, Msg } from '@/lib/interfaces';
 import { ChatRoom } from "@/lib/interfaces";
 import { io, Socket } from 'socket.io-client';
@@ -13,6 +13,7 @@ interface GlobalContextType {
   rooms: ChatRoom[],
   isConnected: boolean,
   transport: string,
+  version: number,
   setLayout: (layoutId: number | null) => void,
   deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
@@ -71,7 +72,6 @@ const defaultLayouts: Layout[] = [
 ]
 
 const globalContext = createContext<GlobalContextType | undefined>(undefined);
-let clients: Client[] = []
 
 export function GlobalProvider({
   chatRooms,
@@ -83,11 +83,12 @@ export function GlobalProvider({
   // Functions exposed on the context
   function setLayout(layoutId: number | null) {
     setStateLayout(prev => {
-      if (prev)
-        return layouts?.find(l => l.id === layoutId) ?? null
+      if (layouts)
+        return layouts.find(l => l.id === layoutId) ?? null
       return null
     })
     storeSelLayoutInLS(layoutId)
+    setVersion(v => v + 1)
   }
   function deleteLayout(layoutId: number) {
     setStateLayout(prev => {
@@ -124,21 +125,17 @@ export function GlobalProvider({
     storeLayoutsInLS(newList)
   }
   function registerClient(onMessage: (msg: Msg) => void) {
-    const newId = clients.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
-    console.log("registerClient newId: " + newId)
-    clients.push({ clientId: newId, roomId: -1, onMessage })
-    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
+    const newId = clients.current.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
+    clients.current.push({ clientId: newId, roomId: -1, onMessage })
     return newId
   }
   function unregisterClient(clientId: number) {
-    console.log("unregisterClient clientId: " + clientId)
-    clients = clients.filter(c => c.clientId !== clientId)
-    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
+    clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
-    const client = clients.find(c => c.clientId === clientId)
+    const client = clients.current.find(c => c.clientId === clientId)
     if (!client) {
       console.log("Found no client with clientId: " + clientId)
       return
@@ -160,7 +157,6 @@ export function GlobalProvider({
       // Join new room
       socket.emit("join", createMsg(roomId, ""))
     }
-    clients.forEach(c => { console.log("GC registerClient client: " + c.clientId + " - " + c.roomId) })
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
@@ -178,18 +174,23 @@ export function GlobalProvider({
   // Other functions
   function onMessage(data: unknown) {
     const msgs = data as Msg[]
+    let recipientFound = false
     msgs.forEach(msg => {
-      clients.forEach(c => {
+      clients.current.forEach(c => {
         if (c.roomId === msg.room_id) {
           c.onMessage(msg)
+          recipientFound = true
         }
       })
+      if (!recipientFound)
+        console.log("ERROR: found no recipient for message: ", msg);
     })
+
   }
   function onJoined(data: unknown) {
     const msg = data as Msg
     msg.message = "<" + msg.user + " has joined>"
-    clients.forEach(c => {
+    clients.current.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
     })
@@ -197,7 +198,7 @@ export function GlobalProvider({
   function onLeft(data: unknown) {
     const msg = data as Msg
     msg.message = "<" + msg.user + " has left>"
-    clients.forEach(c => {
+    clients.current.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
     })
@@ -279,7 +280,7 @@ export function GlobalProvider({
     return lso
   }
   function getClient(clientId: number) {
-    const client = clients.find(c => c.clientId === clientId)
+    const client = clients.current.find(c => c.clientId === clientId)
     if (!client)
       throw new Error("Found no client with clientId: " + clientId)
     return client
@@ -291,6 +292,12 @@ export function GlobalProvider({
   const [socket, setSocket] = useState<Socket | undefined>()
   const [isConnected, setIsConnected] = useState(false)
   const [transport, setTransport] = useState("N/A")
+
+  // Used as key to Splitter to force reset 
+  // of entire tree when changing layout
+  const [version, setVersion] = useState(0)
+
+  const clients = useRef<Client[]>([])
   const usr = useUser()
 
   useEffect(() => {
@@ -329,7 +336,7 @@ export function GlobalProvider({
 
   return (
     <globalContext.Provider value={{
-      layouts, layout, rooms, isConnected, transport,
+      layouts, layout, rooms, isConnected, transport, version,
       setLayout, deleteLayout, createLayout, saveLayout,
       resetDefaults: storeDefaultLayouts,
       registerClient, unregisterClient, joinRoom, sendMsg,
