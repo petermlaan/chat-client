@@ -81,7 +81,7 @@ export default function LayoutPage() {
             <textarea id="layout" />
             <div className="flexcentwrap">
                 <button onClick={onCreate}>Create</button>
-                <button onClick={onSave}>Update</button>
+                <button onClick={onSave}>Save</button>
                 <button onClick={onDelete}>Delete</button>
                 <button onClick={onPick}>Select</button>
                 <button onClick={onReset}>Reset all</button>

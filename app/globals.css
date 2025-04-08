@@ -1,12 +1,15 @@
 :root {
   --background: #fff;
   --foreground: #222;
+  --msguser: #f73;
+  --msgmessage: #440;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #023;
     --foreground: #ddf;
+    --msgmessage: #ff0;
   }
 }
 
@@ -173,16 +176,18 @@ main {
   display: none;
   position: absolute;
   z-index: 1;
-  left: 0;
+  width: max-content;
 
   button {
-    min-width: max-content;
+    width: auto;
+    text-align: left;
+    padding: 0 0.2rem;
   }
 }
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown-content {
-  display: block;
+  display: grid;
 
   button:hover {
     background-color: var(--foreground);

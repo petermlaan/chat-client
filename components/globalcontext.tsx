@@ -130,7 +130,7 @@ export function GlobalProvider({
   function unregisterClient(clientId: number) {
     const client = clients.current.find(c => c.clientId === clientId)
     if (socket.current && client && client.roomId > -1)
-      socket.current.emit("leave", createMsg(client.roomId, ""))
+      socket.current.emit("leave", createMsg(client.roomId, "", 2))
     clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
@@ -150,13 +150,13 @@ export function GlobalProvider({
     if (client.roomId > -1) {
       // Leave old room
       console.log("GC joinRoom: leaving old room", { clientId, roomId });
-      socket.current.emit("leave", createMsg(client.roomId, ""))
+      socket.current.emit("leave", createMsg(client.roomId, "", 2))
     }
     client.roomId = roomId
     if (roomId > -1) {
       console.log("GC joinRoom: joining room", { clientId, roomId });
       // Join new room
-      socket.current.emit("join", createMsg(roomId, ""))
+      socket.current.emit("join", createMsg(roomId, "", 2))
     }
   }
   function sendMsg(clientId: number, message: string) {
@@ -169,7 +169,7 @@ export function GlobalProvider({
       console.log("GC sendMsg: no socket or no connection", socket)
       return
     }
-    socket.current.emit("message", createMsg(roomId, message))
+    socket.current.emit("message", createMsg(roomId, message, 0))
   }
   function disconnect() {
     console.log("disconnect: ", socket.current)
@@ -227,11 +227,12 @@ export function GlobalProvider({
     setIsConnected(false)
     setTransport("")
   }
-  function createMsg(roomId: number, message: string) {
+  function createMsg(roomId: number, message: string, type: number) {
     const msg: Msg = {
       user: username.current,
       room_id: roomId,
-      message: message,
+      message,
+      type,
       save: true,
     }
     return msg
