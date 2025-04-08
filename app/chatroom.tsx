@@ -2,7 +2,7 @@
 import { KeyboardEvent, MouseEvent as ReactMouseEvent } from "react"
 import styles from "./chatroom.module.css"
 import { useChatContext } from "../components/chatcontext"
-import { query } from "@/lib/util"
+import { queryClosest } from "@/lib/util"
 import Rooms from "./rooms"
 
 export default function ChatRoom({
@@ -11,12 +11,12 @@ export default function ChatRoom({
     roomId: number
 }) {
     function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = query(".msgtxt", e.currentTarget)
+        const node = queryClosest(".msgtxt", e.currentTarget)
         sendMsg(node)
     }
     function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
         if (e.key === 'Enter') {
-            const node = query(".msgtxt", e.currentTarget)
+            const node = queryClosest(".msgtxt", e.currentTarget)
             sendMsg(node)
         }
     }
@@ -36,6 +36,12 @@ export default function ChatRoom({
             }
         }
     }
+    function onUserClick(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
+        const node = queryClosest(".msgtxt", e.currentTarget)
+        const input = node as HTMLInputElement
+        input.value = "@" + e.currentTarget.innerText + " " + input.value
+        input.focus()
+    }
 
     const cc = useChatContext()
 
@@ -44,8 +50,8 @@ export default function ChatRoom({
             <div className={styles.msgs}>
                 {cc.messages.map((m, i) =>
                     <div className={styles.msg} key={i}> 
-                        <span className={styles.msguser} key={"u" + i}>{(m.type < 2) && m.user + ": "}</span>
-                        <span className={(m.type === 0) ? styles.msgmessage : (m.type === 1) ? styles.msgpm : styles.msgsystem} key={"m" + i}>{m.message}</span>
+                        {(m.type < 2) && <button onClick={onUserClick} className={styles.msguser} key={"u" + i}>{m.user}</button>}
+                        <span className={(m.type === 0) ? styles.msgmessage : (m.type === 1) ? styles.msgpm : styles.msgsystem} key={"m" + i}>{((m.type < 2) ? ": " : "") + m.message}</span>
                     </div>
                 )}
             </div>

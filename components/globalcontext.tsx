@@ -169,7 +169,11 @@ export function GlobalProvider({
       console.log("GC sendMsg: no socket or no connection", socket)
       return
     }
-    socket.current.emit("message", createMsg(roomId, message, 0))
+    if (message.startsWith("@")) {
+      if (message.includes(" "))
+        socket.current.emit("pm", createMsg(roomId, message, 1))
+    } else
+      socket.current.emit("message", createMsg(roomId, message, 0))
   }
   function disconnect() {
     console.log("disconnect: ", socket.current)
@@ -196,7 +200,21 @@ export function GlobalProvider({
       if (!recipientFound)
         console.log("ERROR: found no recipient for message: ", msg);
     })
-
+  }
+  function onPM(data: unknown) {
+    const msgs = data as Msg[]
+    console.log("PM", msgs)
+    let recipientFound = false
+    msgs.forEach(msg => {
+      clients.current.forEach(c => {
+        if (c.roomId === msg.room_id) {
+          c.onMessage(msg)
+          recipientFound = true
+        }
+      })
+      if (!recipientFound)
+        console.log("ERROR: found no recipient for message: ", msg);
+    })
   }
   function onJoined(data: unknown) {
     const msg = data as Msg
@@ -332,6 +350,7 @@ export function GlobalProvider({
       s.on("disconnect", onDisconnect)
       s.on("connect", onConnect)
       s.on("message", onMessage)
+      s.on("pm", onPM)
       s.on("joined", onJoined)
       s.on("left", onLeft)
       socket.current = s

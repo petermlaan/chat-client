@@ -23,6 +23,8 @@
 
 .msguser {
   color: var(--msguser);
+  border: none;
+  width: auto;
 }
 
 .msgmessage {
