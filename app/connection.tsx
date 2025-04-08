@@ -1,6 +1,8 @@
 "use client"
 import { useGlobalContext } from "@/components/globalcontext"
 
+// SVG that shows if we are connected to the chat server.
+// Clicking on the icon connects or disconnects us from the server.
 export default function Connection() {
     const gc = useGlobalContext()
 

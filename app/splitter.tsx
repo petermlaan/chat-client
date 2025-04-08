@@ -2,6 +2,7 @@ import { Split } from "@/lib/interfaces"
 import styles from "./splitter.module.css"
 import ChatRoomCont from "./chatroomcont"
 
+// Recursive component that splits the screen for all the ChatRooms.
 export default function Splitter({
     layout
 }: {
