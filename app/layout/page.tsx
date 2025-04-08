@@ -3,7 +3,7 @@ import styles from "./page.module.css"
 import { useGlobalContext } from "../../components/globalcontext"
 import { Layout, Split } from "@/lib/interfaces"
 import { MouseEvent as ReactMouseEvent, SyntheticEvent, useState } from "react"
-import { queryClosest, queryInput, queryTextArea } from "@/lib/util"
+import { queryClosest } from "@/lib/util"
 
 export default function LayoutPage() {
     function onSave() {
@@ -27,10 +27,10 @@ export default function LayoutPage() {
         setSelLayout(sel ?? null)
     }
     function onCreate(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const name = queryInput("#name", e.currentTarget)
-        const layout = queryTextArea("#layout", e.currentTarget)
+        const name = queryClosest("#name", e.currentTarget) as HTMLInputElement
+        const layout = queryClosest("#layout", e.currentTarget) as HTMLTextAreaElement
         if (name) {
-            gc.createLayout(name, layout)
+            gc.createLayout(name.value, layout.value)
             render(null)
         }
     }

@@ -51,11 +51,22 @@ export default function ChatRoom({
                 {cc.roomId > -1 ?
                     cc.messages.map((m, i) =>
                         <div className={styles.msg} key={i}>
-                            {(m.type < 2) && <button onClick={onUserClick} className={styles.msguser} key={"u" + i}>{m.user}</button>}
-                            <span className={(m.type === 0) ? styles.msgmessage : (m.type === 1) ? styles.msgpm : styles.msgsystem} key={"m" + i}>{((m.type < 2) ? ": " : "") + m.message}</span>
+                            {(m.type < 2) &&
+                                <button onClick={onUserClick} className={styles.msguser}
+                                    key={"u" + i}>{m.user}</button>}
+                            <span className={(m.type === 0) ?
+                                styles.msgmessage :
+                                (m.type === 1) ?
+                                    styles.msgpm :
+                                    styles.msgsystem}
+                                key={"m" + i}>
+                                {((m.type < 2) ? ": " : "") + m.message}
+                            </span>
                         </div>
                     ) :
-                    <div className={styles.noroom}><span>Join a chat room!</span></div>
+                    <div className={styles.noroom}>
+                        <span>Join a chat room!</span>
+                    </div>
                 }
             </div>
             <div className={styles.ctrl}>
