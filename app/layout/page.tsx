@@ -3,7 +3,7 @@ import styles from "./page.module.css"
 import { useGlobalContext } from "../../components/globalcontext"
 import { Layout, Split } from "@/lib/interfaces"
 import { MouseEvent as ReactMouseEvent, SyntheticEvent, useState } from "react"
-import { query, queryInput, queryTextArea } from "@/lib/util"
+import { queryClosest, queryInput, queryTextArea } from "@/lib/util"
 
 export default function LayoutPage() {
     function onSave() {
@@ -40,7 +40,7 @@ export default function LayoutPage() {
     function onDelete(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         if (selLayout) {
             gc.deleteLayout(selLayout.id)
-            const node = query("#layouts", e.currentTarget) as HTMLSelectElement
+            const node = queryClosest("#layouts", e.currentTarget) as HTMLSelectElement
             node.selectedIndex = 0
             render(null)
             if (gc.layout?.id === selLayout.id)
