@@ -44,7 +44,7 @@ interface ChatContextType {
     messages: Msg[],
     joinRoom: (roomNo: number) => void,
     sendMsg: (m: string) => void,
-    room: number,
+    roomId: number,
     isSpamming: boolean,
     startSpam: () => void,
     endSpam: () => void,
@@ -67,7 +67,7 @@ export function ChatProvider({
         endSpam()
         setMessages([])
         if (clientIdRef.current > -1) {
-            setRoom(roomId)
+            setRoomId(roomId)
             gc.joinRoom(clientIdRef.current, roomId)
         }
     }
@@ -93,7 +93,7 @@ export function ChatProvider({
 
     const [messages, setMessages] = useState<Msg[]>([])
     const [spamId, setSpamId] = useState(-1)
-    const [roomId, setRoom] = useState(-1)
+    const [roomId, setRoomId] = useState(-1)
     const clientIdRef = useRef(-1)
     const gc = useGlobalContext()
 
@@ -115,7 +115,7 @@ export function ChatProvider({
 
     return (
         <ChatContext.Provider value={{
-            clientId: clientIdRef.current, messages, joinRoom, sendMsg, room: roomId, isSpamming: spamId > -1, startSpam, endSpam
+            clientId: clientIdRef.current, messages, joinRoom, sendMsg, roomId, isSpamming: spamId > -1, startSpam, endSpam
         }}>
             {children}
         </ChatContext.Provider>
