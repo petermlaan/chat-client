@@ -17,6 +17,16 @@
   overflow-y: auto;
 }
 
+.noroom {
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  height: 100%;
+  font-family: var(--font-luxurious-roman);
+  font-size: xx-large;
+  color: var(--background2);
+}
+
 .msg {
   padding: 0.4rem;
 }
