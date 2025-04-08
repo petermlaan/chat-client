@@ -43,7 +43,10 @@ export default function ChatRoom({
         <div className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.messages.map((m, i) =>
-                    <div className={styles.msg} key={i}>{m.user + ": " + m.message}</div>
+                    <div className={styles.msg} key={i}> 
+                        <span className={styles.msguser} key={"u" + i}>{(m.type < 2) && m.user + ": "}</span>
+                        <span className={(m.type === 0) ? styles.msgmessage : (m.type === 1) ? styles.msgpm : styles.msgsystem} key={"m" + i}>{m.message}</span>
+                    </div>
                 )}
             </div>
             <div className={styles.ctrl}>

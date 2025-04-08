@@ -2,6 +2,7 @@ export interface Msg {
     room_id: number;
     user: string;
     message: string;
+    type: number; // 0 = chat message, 1 = PM, 2 = system
     save: boolean; // not used on the client
 }
 

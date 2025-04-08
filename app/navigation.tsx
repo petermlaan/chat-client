@@ -17,7 +17,8 @@ export default function Navigation() {
         </Link>
         <div className="dropdown-content">
           {gc.layouts.map((l, i) =>
-            <button onClick={(e) => gc.setLayout(+e.currentTarget.value)} value={l.id} key={i}>{l.name}</button>
+            <button onClick={(e) => gc.setLayout(+e.currentTarget.value)} 
+              value={l.id} key={i}>{(gc.layout?.id === l.id ? "* " : "") + l.name}</button>
           )}
         </div>
       </div>
