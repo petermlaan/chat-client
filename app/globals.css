@@ -72,9 +72,12 @@ textarea {
 
 main {
   height: 100%;
+  max-height: 100%;
 }
 
 .imgbtn {
+  display: flex;
+  align-items: center;
   width: auto;
   border: none;
   background-color: var(--background);
