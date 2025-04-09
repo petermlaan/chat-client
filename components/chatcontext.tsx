@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Msg } from '@/lib/interfaces';
 import { rnd } from '@/lib/util';
 import { useGlobalContext } from './globalcontext';
+import { MAX_MESSAGES } from '@/lib/constants';
 
 const spam = [
     "SPAM!!!",
@@ -59,7 +60,8 @@ export function ChatProvider({
 }) {
     function onMessage(msg: Msg) {
         setMessages(prev => {
-            const newList = prev.length > 150 ? prev.slice(0, 100) : prev
+            const newList = prev.length > MAX_MESSAGES ? prev.slice(0, Math.floor(MAX_MESSAGES / 2)) : prev
+            msg.id = crypto.randomUUID() // Used for unique keys for react performance reasons.
             return [msg, ...newList]
         })
     }

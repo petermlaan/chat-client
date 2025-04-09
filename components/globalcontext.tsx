@@ -193,7 +193,7 @@ export function GlobalProvider({
     msgs.forEach(msg => {
       clients.current.forEach(c => {
         if (c.roomId === msg.room_id) {
-          c.onMessage(msg)
+          c.onMessage({...msg})
           recipientFound = true
         }
       })
