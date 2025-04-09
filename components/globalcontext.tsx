@@ -130,7 +130,7 @@ export function GlobalProvider({
   function unregisterClient(clientId: number) {
     const client = clients.current.find(c => c.clientId === clientId)
     if (socket.current && client && client.roomId > -1)
-      socket.current.emit("leave", createMsg(client.roomId, "", 2))
+      leaveRoom(client)
     clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
@@ -147,17 +147,11 @@ export function GlobalProvider({
       console.log("GC joinRoom: NO SOCKET!", { clientId, roomId });
       return
     }
-    if (client.roomId > -1) {
-      // Leave old room
-      console.log("GC joinRoom: leaving old room", { clientId, roomId });
-      socket.current.emit("leave", createMsg(client.roomId, "", 2))
-    }
+    if (client.roomId > -1)
+      leaveRoom(client)
     client.roomId = roomId
-    if (roomId > -1) {
-      console.log("GC joinRoom: joining room", { clientId, roomId });
-      // Join new room
+    if (roomId > -1)
       socket.current.emit("join", createMsg(roomId, "", 2))
-    }
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
@@ -314,6 +308,11 @@ export function GlobalProvider({
     if (!client)
       throw new Error("Found no client with clientId: " + clientId)
     return client
+  }
+  function leaveRoom(client: Client) {
+    if (client.roomId > -1 && socket.current &&
+      clients.current.reduce((a, c) => a + +(c.roomId === client.roomId), 0) === 1)
+        socket.current.emit("leave", createMsg(client.roomId, "", 2))
   }
 
   const [layouts, setLayouts] = useState<Layout[]>([])
