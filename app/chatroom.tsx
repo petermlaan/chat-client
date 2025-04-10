@@ -54,13 +54,14 @@ export default function ChatRoom({
                             {(m.type < 2) &&
                                 <button onClick={onUserClick} className={styles.msguser}
                                     key={"u" + m.id}>{m.user}</button>}
+                            {((m.type < 2) ? ": " : "")}
                             <span className={(m.type === 0) ?
                                 styles.msgmessage :
                                 (m.type === 1) ?
                                     styles.msgpm :
                                     styles.msgsystem}
                                 key={"m" + m.id}>
-                                {((m.type < 2) ? ": " : "") + m.message}
+                                {m.message}
                             </span>
                         </div>
                     ) :

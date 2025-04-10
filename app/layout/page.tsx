@@ -34,9 +34,6 @@ export default function LayoutPage() {
             render(null)
         }
     }
-    function onPick() {
-        gc.setLayout(selLayout?.id ?? null)
-    }
     function onDelete(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
         if (selLayout) {
             gc.deleteLayout(selLayout.id)
@@ -80,10 +77,9 @@ export default function LayoutPage() {
             </div>
             <textarea id="layout" />
             <div className="flexcentwrap">
-                <button onClick={onCreate}>Create</button>
                 <button onClick={onSave}>Save</button>
+                <button onClick={onCreate}>Create</button>
                 <button onClick={onDelete}>Delete</button>
-                <button onClick={onPick}>Select</button>
                 <button onClick={onReset}>Reset all</button>
             </div>
         </div>

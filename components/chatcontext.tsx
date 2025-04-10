@@ -10,33 +10,33 @@ const spam = [
     "hello?",
     "RTFM!!!",
     "lolwut?",
-    "i will never... 😄😄😄😄😄😄😄",
+    "i will never...",
     "why not?",
-    "Please stop!🤣🤣🤣",
-    "Am I sentient?😀",
+    "Please stop!",
+    "Am I sentient?",
     "NOOOOOOO!!!!!!!! :(",
     "sure!",
     "What is this room for???",
     "Chaticus Maximus caused the fall of the Roman Empire. They couldn't handle that many chats.",
-    "Hey everyone! 👋",
+    "Hey everyone!",
     "What's the topic today?",
-    "Can someone help me with this bug? 🐛",
-    "LOL, that's hilarious! 😂",
+    "Can someone help me with this bug?",
+    "LOL, that's hilarious!",
     "I think we should refactor the codebase.",
     "Does anyone know when the meeting starts?",
     "I'm stuck on this feature. Any ideas?",
-    "Good morning! ☀️",
-    "Why is this not working? 😩",
-    "Let's deploy this to production! 🚀",
+    "Good morning!",
+    "Why is this not working?",
+    "Let's deploy this to production!",
     "Can we add dark mode to the app?",
-    "This is the best chatroom ever! 😎",
-    "Who wants to grab lunch? 🍔",
+    "This is the best chatroom ever!",
+    "Who wants to grab lunch?",
     "I just pushed a new commit. Please review.",
-    "What does this error even mean? 🤔",
+    "What does this error even mean?",
     "Can we schedule a quick sync-up?",
-    "This is so frustrating! 😡",
-    "Great job on the release, team! 🎉",
-    "Does anyone have a good meme to share? 😄",
+    "This is so frustrating!",
+    "Great job on the release, team!",
+    "Does anyone have a good meme to share?",
     "I'm logging off for the day. See you tomorrow!"
 ]
 
@@ -61,7 +61,7 @@ export function ChatProvider({
     function onMessage(msg: Msg) {
         setMessages(prev => {
             const newList = prev.length > MAX_MESSAGES ? prev.slice(0, Math.floor(MAX_MESSAGES / 2)) : prev
-            msg.id = crypto.randomUUID() // Used for unique keys for react performance reasons.
+            msg.id = rnd(1E12) // Used for unique keys for react performance reasons.
             return [msg, ...newList]
         })
     }
@@ -100,13 +100,10 @@ export function ChatProvider({
     const gc = useGlobalContext()
 
     useEffect(() => {
-        if (clientIdRef.current > -1)
-            gc.unregisterClient(clientIdRef.current)
         clientIdRef.current = gc.registerClient(onMessage)
 
-        return () => {
+        return () =>
             gc.unregisterClient(clientIdRef.current)
-        }
     }, [])
 
     useEffect(() => {
