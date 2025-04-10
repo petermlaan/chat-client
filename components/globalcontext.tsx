@@ -187,7 +187,7 @@ export function GlobalProvider({
     msgs.forEach(msg => {
       clients.current.forEach(c => {
         if (c.roomId === msg.room_id) {
-          c.onMessage({...msg})
+          c.onMessage({ ...msg })
           recipientFound = true
         }
       })
@@ -212,7 +212,7 @@ export function GlobalProvider({
   }
   function onJoined(data: unknown) {
     const msg = data as Msg
-    msg.message = "<" + msg.user + " has joined>"
+    msg.message = "<" + msg.user + " joined>"
     clients.current.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
@@ -220,7 +220,7 @@ export function GlobalProvider({
   }
   function onLeft(data: unknown) {
     const msg = data as Msg
-    msg.message = "<" + msg.user + " has left>"
+    msg.message = "<" + msg.user + " left>"
     clients.current.forEach(c => {
       if (c.roomId === msg.room_id)
         c.onMessage(msg)
@@ -312,7 +312,7 @@ export function GlobalProvider({
   function leaveRoom(client: Client) {
     if (client.roomId > -1 && socket.current &&
       clients.current.reduce((a, c) => a + +(c.roomId === client.roomId), 0) === 1)
-        socket.current.emit("leave", createMsg(client.roomId, "", 2))
+      socket.current.emit("leave", createMsg(client.roomId, "", 2))
   }
 
   const [layouts, setLayouts] = useState<Layout[]>([])
@@ -345,7 +345,7 @@ export function GlobalProvider({
     if (usr.user && usr.isLoaded && usr.isSignedIn && !socket.current) {
       console.log("GC useEffect user - creating socket...")
       username.current = usr.user?.username ?? ""
-      const s = io("ws://localhost:8080", { auth: { token: usr.user?.username }, })
+      const s = io("ws://192.168.1.112:8080", { auth: { token: usr.user?.username }, })
       s.on("disconnect", onDisconnect)
       s.on("connect", onConnect)
       s.on("message", onMessage)
@@ -354,16 +354,6 @@ export function GlobalProvider({
       s.on("left", onLeft)
       socket.current = s
     }
-
-    /*     return () => {
-          console.log("GC useEffect user cleanup")
-          if (socket) {
-            console.log("GC useEffect cleanup user - disconnecting...")
-            socket.removeAllListeners()
-            socket.disconnect()
-            setSocket(undefined)
-          }
-        } */
   }, [usr])
 
   return (

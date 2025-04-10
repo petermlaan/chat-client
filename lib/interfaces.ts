@@ -1,6 +1,6 @@
 
 export interface Msg {
-    id?: string;
+    id?: number;
     room_id: number;
     user: string; // user name
     message: string;

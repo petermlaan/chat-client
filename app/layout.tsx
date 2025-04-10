@@ -1,13 +1,13 @@
 import "server-only"
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Luxurious_Roman } from "next/font/google";
-import "./globals.css";
-import { GlobalProvider } from "../components/globalcontext";
-import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
-import { dbGetChatRooms } from "@/lib/server/db";
-import Navigation from "./navigation";
-import Link from "next/link";
-import Connection from "./connection";
+import type { Metadata } from "next"
+import { Geist, Luxurious_Roman, Space_Mono } from "next/font/google"
+import "./globals.css"
+import { GlobalProvider } from "../components/globalcontext"
+import { ClerkProvider, SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs"
+import { dbGetChatRooms } from "@/lib/server/db"
+import Navigation from "./navigation"
+import Link from "next/link"
+import Connection from "./connection"
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -20,9 +20,10 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const dotoMono = Space_Mono({
+  variable: "--font-space-mono",
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -38,7 +39,7 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${geistMono.variable} ${luxuriousRoman.variable}`}>
+        <body className={`${geistSans.variable} ${dotoMono.variable} ${luxuriousRoman.variable}`}>
           <GlobalProvider chatRooms={await dbGetChatRooms()}>
             <div className="page">
               <header className="banner">

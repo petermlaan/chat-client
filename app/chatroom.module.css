@@ -28,7 +28,8 @@
 }
 
 .msg {
-  padding: 0.4rem;
+  padding: 0.2rem;
+  font-family: var(--font-space-mono);
 }
 
 .msguser {
@@ -43,7 +44,6 @@
 
 .msgpm {
   color: var(--foreground);
-  border: 1px solid;
 }
 
 .msgsystem {

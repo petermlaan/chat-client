@@ -2,16 +2,17 @@
   --background: #fff;
   --background2: #ddd;
   --foreground: #222;
-  --msguser: #f73;
   --msgmessage: #440;
+  --msguser: #090;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #023;
-    --background2: #045;
-    --foreground: #ddf;
-    --msgmessage: #ff0;
+    --background: #000;
+    --background2: #034;
+    --foreground: #bbf;
+    --msgmessage: #fff;
+    --msguser: #0f0;
   }
 }
 
