@@ -104,6 +104,18 @@ main {
   gap: 0.2rem;
 }
 
+.font1 {
+  font-family: var(--font-geist-sans)
+}
+
+.font2 {
+  font-family: var(--font-luxurious-roman)
+}
+
+.font3 {
+  font-family: var(--font-space-mono)
+}
+
 .page {
   display: flex;
   flex-direction: column;
@@ -130,7 +142,7 @@ main {
 }
 
 .user {
-  right: 0.4rem;
+  right: 1rem;
   display: flex;
   align-items: center;
   gap: 0.4rem;

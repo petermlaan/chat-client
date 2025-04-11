@@ -4,6 +4,7 @@ import styles from "./chatroom.module.css"
 import { useChatContext } from "../components/chatcontext"
 import { queryClosest } from "@/lib/util"
 import Rooms from "./rooms"
+import { useGlobalContext } from "@/components/globalcontext"
 
 export default function ChatRoom({
     roomId
@@ -44,13 +45,14 @@ export default function ChatRoom({
     }
 
     const cc = useChatContext()
+    const gc = useGlobalContext()
 
     return (
-        <div className={styles.chatroom}>
+        <section className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.roomId > -1 ?
                     cc.messages.map(m =>
-                        <div className={styles.msg} key={m.id}>
+                        <div className={styles.msg + gc.fontClass} key={m.id}>
                             {(m.type < 2) &&
                                 <button onClick={onUserClick} className={styles.msguser}
                                     key={"u" + m.id}>{m.user}</button>}
@@ -92,6 +94,6 @@ export default function ChatRoom({
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
