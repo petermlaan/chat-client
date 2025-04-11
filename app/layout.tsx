@@ -8,6 +8,7 @@ import { dbGetChatRooms } from "@/lib/server/db"
 import Navigation from "./navigation"
 import Link from "next/link"
 import Connection from "./connection"
+import Fonts from "./fonts"
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -20,7 +21,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const dotoMono = Space_Mono({
+const spaceMono = Space_Mono({
   variable: "--font-space-mono",
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -39,13 +40,14 @@ export default async function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${geistSans.variable} ${dotoMono.variable} ${luxuriousRoman.variable}`}>
+        <body className={`${geistSans.variable} ${spaceMono.variable} ${luxuriousRoman.variable}`}>
           <GlobalProvider chatRooms={await dbGetChatRooms()}>
             <div className="page">
               <header className="banner">
                 <Link href="/" prefetch={false}><h1 className="logo">Chaticus Maximus</h1></Link>
                 <Navigation />
                 <div className="user">
+                  <Fonts />
                   <Connection />
                   <SignedOut>
                     <SignInButton />
@@ -61,6 +63,6 @@ export default async function RootLayout({
           </GlobalProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkProvider >
   );
 }

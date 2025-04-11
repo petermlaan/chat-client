@@ -14,6 +14,7 @@ interface GlobalContextType {
   isConnected: boolean,
   transport: string,
   version: number,
+  fontClass: string,
   setLayout: (layoutId: number | null) => void,
   deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
@@ -25,6 +26,7 @@ interface GlobalContextType {
   sendMsg: (clientId: number, message: string) => void,
   disconnect: () => void,
   connect: () => void,
+  setFontClass: (fontClass: string) => void,
 }
 
 interface Client {
@@ -320,6 +322,7 @@ export function GlobalProvider({
   const [rooms, setRooms] = useState<ChatRoom[]>([])
   const [isConnected, setIsConnected] = useState(false)
   const [transport, setTransport] = useState("N/A")
+  const [fontClass, setFontClass] = useState(" font3")
 
   // Used as key to Splitter to force reset 
   // of entire tree when changing layout
@@ -358,10 +361,10 @@ export function GlobalProvider({
 
   return (
     <globalContext.Provider value={{
-      layouts, layout, rooms, isConnected, transport, version,
+      layouts, layout, rooms, isConnected, transport, version, fontClass,
       setLayout, deleteLayout, createLayout, saveLayout,
       resetDefaults: storeDefaultLayouts, registerClient,
-      unregisterClient, joinRoom, sendMsg, disconnect, connect
+      unregisterClient, joinRoom, sendMsg, disconnect, connect, setFontClass
     }}>
       {children}
     </globalContext.Provider>
