@@ -52,7 +52,7 @@ export default function ChatRoom({
             <div className={styles.msgs}>
                 {cc.roomId > -1 ?
                     cc.messages.map(m =>
-                        <div className={styles.msg + gc.fontClass} key={m.id}>
+                        <div className={styles.msg + gc.settings.fontClass + gc.settings.fontSizeClass} key={m.id}>
                             {(m.type < 2) &&
                                 <button onClick={onUserClick} className={styles.msguser}
                                     key={"u" + m.id}>{m.user}</button>}

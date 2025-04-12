@@ -6,8 +6,10 @@ export default function Fonts() {
 
     const fonts = [
         { name: "Geist", class: " font1" },
-        { name: "Romano", class: " font2" },
+        { name: "Roman", class: " font2" },
         { name: "Space", class: " font3" },
+        { name: "Merriweather", class: " font4" },
+        { name: "Teko", class: " font5" },
     ]
 
     return (
@@ -21,8 +23,8 @@ export default function Fonts() {
             </svg>
             <div className="dropdown-content">
                 {fonts.map((f, i) =>
-                    <button onClick={(e) => gc.setFontClass(e.currentTarget.value)}
-                        value={f.class} key={i}>{(gc.fontClass === f.class ? "* " : "") + f.name}</button>
+                    <button onClick={(e) => gc.setSettings({fontClass: e.currentTarget.value})}
+                        value={f.class} key={i}>{(gc.settings.fontClass === f.class ? "* " : "") + f.name}</button>
                 )}
             </div>
         </div>

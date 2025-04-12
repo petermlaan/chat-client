@@ -4,7 +4,7 @@ import { Layout, Msg } from '@/lib/interfaces';
 import { ChatRoom } from "@/lib/interfaces";
 import { io, Socket } from 'socket.io-client';
 import { useUser } from '@clerk/nextjs';
-import { LS_LAYOUTS } from '@/lib/constants';
+import { LS_LAYOUTS, LS_SETTINGS } from '@/lib/constants';
 import { LS_SEL_LAYOUT } from '@/lib/constants';
 
 interface GlobalContextType {
@@ -14,7 +14,7 @@ interface GlobalContextType {
   isConnected: boolean,
   transport: string,
   version: number,
-  fontClass: string,
+  settings: Settings,
   setLayout: (layoutId: number | null) => void,
   deleteLayout: (layoutId: number) => void,
   createLayout: (name: string, layout: string) => void,
@@ -26,13 +26,18 @@ interface GlobalContextType {
   sendMsg: (clientId: number, message: string) => void,
   disconnect: () => void,
   connect: () => void,
-  setFontClass: (fontClass: string) => void,
+  setSettings: (settings: Partial<Settings>) => void,
 }
 
 interface Client {
   clientId: number;
   roomId: number;
   onMessage: (msg: Msg) => void;
+}
+
+interface Settings {
+  fontClass: string;
+  fontSizeClass: string;
 }
 
 const defaultLayouts: Layout[] = [
@@ -181,6 +186,13 @@ export function GlobalProvider({
   function connect() {
     socket.current?.connect()
   }
+  function setSettings(s: Partial<Settings>) {
+    const newSettings = {...settings, ...s}
+    setStateSettings(newSettings)
+    if (localStorage) {
+      localStorage.setItem(LS_SETTINGS, JSON.stringify(newSettings))
+    }
+  }
 
   // Other functions
   function onMessage(data: unknown) {
@@ -322,7 +334,10 @@ export function GlobalProvider({
   const [rooms, setRooms] = useState<ChatRoom[]>([])
   const [isConnected, setIsConnected] = useState(false)
   const [transport, setTransport] = useState("N/A")
-  const [fontClass, setFontClass] = useState(" font3")
+  const [settings, setStateSettings] = useState({
+    fontClass: "",
+    fontSizeClass: "",
+  })
 
   // Used as key to Splitter to force reset 
   // of entire tree when changing layout
@@ -335,12 +350,20 @@ export function GlobalProvider({
 
   useEffect(() => {
     setRooms(chatRooms)
-    const lso = getLayoutsFromLS()
-    setLayouts(lso)
-    const sel = getSelLayoutFromLS()
-    const selectedLayout = lso.find(l => l.id === sel)
-    if (selectedLayout) {
-      setStateLayout(selectedLayout)
+    if (localStorage) {
+      const lso = getLayoutsFromLS()
+      setLayouts(lso)
+      const sel = getSelLayoutFromLS()
+      const selectedLayout = lso.find(l => l.id === sel)
+      if (selectedLayout) {
+        setStateLayout(selectedLayout)
+      }
+      const lsi = localStorage.getItem(LS_SETTINGS)
+      if (lsi) {
+        const lso = JSON.parse(lsi) as Settings
+        if (lso)
+          setStateSettings(lso)
+      }
     }
   }, [chatRooms])
 
@@ -361,10 +384,10 @@ export function GlobalProvider({
 
   return (
     <globalContext.Provider value={{
-      layouts, layout, rooms, isConnected, transport, version, fontClass,
+      layouts, layout, rooms, isConnected, transport, version, settings,
       setLayout, deleteLayout, createLayout, saveLayout,
       resetDefaults: storeDefaultLayouts, registerClient,
-      unregisterClient, joinRoom, sendMsg, disconnect, connect, setFontClass
+      unregisterClient, joinRoom, sendMsg, disconnect, connect, setSettings,
     }}>
       {children}
     </globalContext.Provider>
