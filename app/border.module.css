@@ -1,9 +1,16 @@
 .border {
-  cursor: grab;
-  background-color: yellow;
+  background: var(--background)
+}
+
+.borderh {
+  cursor: col-resize;
+}
+
+.borderv {
+  cursor: row-resize;
 }
 
 .border.dragging {
-  background-color: red;
   cursor: grabbing;
+  background: yellow;
 }
