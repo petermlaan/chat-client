@@ -5,7 +5,6 @@ import ChatRoomCont from "./chatroomcont"
 import Border from "./border"
 import { useRef } from "react"
 import { useGlobalContext } from "@/components/globalcontext"
-import { queryClosest } from "@/lib/util"
 
 export default function Splitter({
     layout,
@@ -16,8 +15,8 @@ export default function Splitter({
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         console.log("Split onDrop", level, dragover.current)
-        console.log("Split onDrop", e, layout, e.clientX, e.clientY)
-        const div = divRef.current //queryClosest(".split", e.target as HTMLElement)
+        console.log("Split onDrop", layout, e.clientX, e.clientY)
+        const div = divRef.current
         console.log("Split onDrop div", div)
         const rect = div?.getBoundingClientRect()
         console.log("Split onDrop rect", rect)

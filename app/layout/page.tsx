@@ -2,22 +2,19 @@
 import styles from "./page.module.css"
 import { useGlobalContext } from "../../components/globalcontext"
 import { Layout, Split } from "@/lib/interfaces"
-import { MouseEvent as ReactMouseEvent, SyntheticEvent, useState } from "react"
-import { queryClosest } from "@/lib/util"
+import { SyntheticEvent, useRef, useState } from "react"
 
 export default function LayoutPage() {
     function onSave() {
-        const nameNode = document.querySelector("#name") as HTMLInputElement | null
-        if (selLayout && nameNode?.value) {
-            const layoutNode = document.querySelector("#layout") as HTMLInputElement
+        if (selLayout && nameRef.current) {
             try {
                 let layout: Split | undefined = undefined
-                if (layoutNode.value && layoutNode.value !== "undefined")
-                    layout = JSON.parse(layoutNode.value)
-                const updatedLayout: Layout = { ...selLayout, layout: layout, name: nameNode.value }
+                if (layoutRef.current?.textContent)
+                    layout = JSON.parse(layoutRef.current.textContent)
+                const updatedLayout: Layout = { ...selLayout, layout: layout, name: nameRef.current.value }
                 gc.saveLayout(updatedLayout)
             } catch (err) {
-                window.alert("Failed to parse layout string: " + layoutNode.value + " - Error: " + err)
+                window.alert("Failed to parse layout string: " + layoutRef.current?.textContent + " - Error: " + err)
             }
         }
     }
@@ -26,19 +23,16 @@ export default function LayoutPage() {
         render(sel ?? null)
         setSelLayout(sel ?? null)
     }
-    function onCreate(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const name = queryClosest("#name", e.currentTarget) as HTMLInputElement
-        const layout = queryClosest("#layout", e.currentTarget) as HTMLTextAreaElement
-        if (name) {
-            gc.createLayout(name.value, layout.value)
+    function onCreate() {
+        if (nameRef.current && layoutRef.current) {
+            gc.createLayout(nameRef.current.value, layoutRef.current.value)
             render(null)
         }
     }
-    function onDelete(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        if (selLayout) {
+    function onDelete() {
+        if (selLayout && layoutsRef.current) {
             gc.deleteLayout(selLayout.id)
-            const node = queryClosest("#layouts", e.currentTarget) as HTMLSelectElement
-            node.selectedIndex = 0
+            layoutsRef.current.selectedIndex = 0
             render(null)
             if (gc.layout?.id === selLayout.id)
                 setSelLayout(selLayout)
@@ -59,12 +53,15 @@ export default function LayoutPage() {
 
     const gc = useGlobalContext()
     const [selLayout, setSelLayout] = useState<Layout | null>(null)
+    const nameRef = useRef<HTMLInputElement | null>(null)
+    const layoutRef = useRef<HTMLTextAreaElement | null>(null)
+    const layoutsRef = useRef<HTMLSelectElement | null>(null)
 
     return (
         <div className={styles.page}>
             <h2>Layout Editor</h2>
             <div className="flexcent">
-                <select onChange={onSelect} id="layouts">
+                <select ref={layoutsRef} onChange={onSelect} id="layouts">
                     <option>Layouts...</option>
                     {gc.layouts.map((l, i) =>
                         <option value={l.id} key={i}>{l.name}</option>
@@ -73,9 +70,9 @@ export default function LayoutPage() {
             </div>
             <div className="flexcent">
                 <span>Name:</span>
-                <input type="text" id="name" />
+                <input ref={nameRef} type="text" id="name" />
             </div>
-            <textarea id="layout" />
+            <textarea ref={layoutRef} id="layout" />
             <div className="flexcentwrap">
                 <button onClick={onSave}>Save</button>
                 <button onClick={onCreate}>Create</button>
