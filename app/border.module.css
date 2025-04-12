@@ -1,0 +1,9 @@
+.border {
+  cursor: grab;
+  background-color: yellow;
+}
+
+.border.dragging {
+  background-color: red;
+  cursor: grabbing;
+}
