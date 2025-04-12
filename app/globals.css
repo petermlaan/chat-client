@@ -105,15 +105,59 @@ main {
 }
 
 .font1 {
-  font-family: var(--font-geist-sans)
+  font-family: var(--font-geist-sans);
 }
 
 .font2 {
-  font-family: var(--font-luxurious-roman)
+  font-family: var(--font-luxurious-roman);
 }
 
 .font3 {
-  font-family: var(--font-space-mono)
+  font-family: var(--font-space-mono);
+}
+
+.font4 {
+  font-family: var(--font-4);
+}
+
+.font5 {
+  font-family: var(--font-5);
+}
+
+.fontsize8 {
+  font-size: 8px;
+}
+
+.fontsize10 {
+  font-size: 10px;
+}
+
+.fontsize12 {
+  font-size: 12px;
+}
+
+.fontsize14 {
+  font-size: 14px;
+}
+
+.fontsize16 {
+  font-size: 16px;
+}
+
+.fontsize18 {
+  font-size: 18px;
+}
+
+.fontsize20 {
+  font-size: 20px;
+}
+
+.fontsize22 {
+  font-size: 22px;
+}
+
+.fontsize24 {
+  font-size: 24px;
 }
 
 .page {
@@ -186,7 +230,7 @@ main {
 .dropdown {
   position: relative;
   display: inline-block;
-  padding: 0.4rem 1rem;
+  padding: 0.4rem 0;
 }
 
 /* Dropdown Content (Hidden by Default) */
