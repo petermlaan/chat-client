@@ -22,7 +22,9 @@ export default function Border({
     return (
         <div
             className={`${styles.border} ${vertical ? styles.borderv : styles.borderh} ${dragging ? styles.dragging : ""}`}
-            draggable onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            draggable 
+            onDragStart={onDragStart} 
+            onDragEnd={onDragEnd}>
         </div>
     );
 }

@@ -8,24 +8,16 @@ import { useGlobalContext } from "@/components/globalcontext"
 
 export default function Splitter({
     layout,
-    level,
 }: {
     layout: Split | undefined;
-    level: number;
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
-        console.log("Split onDrop", level, dragover.current)
-        console.log("Split onDrop", layout, e.clientX, e.clientY)
-        console.log("Split onDrop div", divRef.current)
         const rect = divRef.current?.getBoundingClientRect()
-        console.log("Split onDrop rect", rect)
-        if (!dragover.current) {
-            console.log("Split onDrop propagation...")
-            return
-        }
+        if (!dragover.current) 
+            return // propagate event to the correct div
         if (rect && layout && layout.percent) {
+            // -45 due to e.clientY including the header height
             const res = (layout.vertical ? ((e.clientY-45) / rect.height) : (e.clientX / rect.width)) * 100
-            console.log("Split onDrop res", res)
             const newPercent = Math.min(95, Math.max(5, res))
             layout.percent = newPercent
         }
@@ -48,7 +40,7 @@ export default function Splitter({
         <>
             {layout?.percent ? (
                 <div
-                    className={styles.cont + " split" + " level" + level}
+                    className={styles.cont}
                     style={
                         layout.vertical
                             ? { gridTemplateRows: `${layout.percent}% 0.8% ${99.2 - layout.percent}%` }
@@ -57,12 +49,12 @@ export default function Splitter({
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     ref={divRef}>
-                    <Splitter layout={layout.child1} level={level+1} />
+                    <Splitter layout={layout.child1} />
                     <Border vertical={layout.vertical} setDragover={setDragover} />
-                    <Splitter layout={layout.child2} level={level+1} />
+                    <Splitter layout={layout.child2} />
                 </div>
             ) : (
-                <ChatRoomCont roomId={layout?.roomId ?? -1} />
+                <ChatRoomCont layout={layout} />
             )}
         </>
     );

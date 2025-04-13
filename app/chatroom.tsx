@@ -4,11 +4,12 @@ import styles from "./chatroom.module.css"
 import { useChatContext } from "../components/chatcontext"
 import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
+import { Split } from "@/lib/interfaces"
 
 export default function ChatRoom({
-    roomId
+    layout
 }: {
-    roomId: number
+    layout: Split | undefined
 }) {
     function onBtnSend() {
         sendMsg()
@@ -67,7 +68,7 @@ export default function ChatRoom({
                 }
             </div>
             <div className={styles.ctrl}>
-                <Rooms roomId={roomId} />
+                <Rooms layout={layout} />
                 <button onClick={onBtnSpam} className="imgbtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
                         viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}
