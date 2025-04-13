@@ -1,9 +1,9 @@
 "use client"
 import styles from "./splitter.module.css"
+import { useRef } from "react"
+import Border from "./border"
 import { Split } from "@/lib/interfaces"
 import ChatRoomCont from "./chatroomcont"
-import Border from "./border"
-import { useRef } from "react"
 import { useGlobalContext } from "@/components/globalcontext"
 
 export default function Splitter({
@@ -16,9 +16,8 @@ export default function Splitter({
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         console.log("Split onDrop", level, dragover.current)
         console.log("Split onDrop", layout, e.clientX, e.clientY)
-        const div = divRef.current
-        console.log("Split onDrop div", div)
-        const rect = div?.getBoundingClientRect()
+        console.log("Split onDrop div", divRef.current)
+        const rect = divRef.current?.getBoundingClientRect()
         console.log("Split onDrop rect", rect)
         if (!dragover.current) {
             console.log("Split onDrop propagation...")

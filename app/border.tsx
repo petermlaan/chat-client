@@ -8,20 +8,16 @@ export default function Border({
     vertical: boolean | undefined,
     setDragover: (dragover: boolean) => void,
 }) {
-    const [dragging, setDragging] = useState(false)
-
-    function onDragStart(e: React.DragEvent<HTMLDivElement>) {
-        console.log("Border onDragStart", e)
+    function onDragStart() {
         setDragging(true)
-        e.dataTransfer.setData("text/plain", "dragging")
         setDragover(true)
     }
-
-    function onDragEnd(e: React.DragEvent<HTMLDivElement>) {
-        console.log("Border onDragEnd", e)
+    function onDragEnd() {
         setDragging(false)
         setDragover(false)
     }
+
+    const [dragging, setDragging] = useState(false)
 
     return (
         <div
