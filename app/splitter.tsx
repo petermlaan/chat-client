@@ -24,12 +24,12 @@ export default function Splitter({
             return
         }
         if (rect && layout && layout.percent) {
-            const res = (layout.vertical ? (e.clientY / rect.height) : (e.clientX / rect.width)) * 100
+            const res = (layout.vertical ? ((e.clientY-45) / rect.height) : (e.clientX / rect.width)) * 100
             console.log("Split onDrop res", res)
             const newPercent = Math.min(95, Math.max(5, res))
             layout.percent = newPercent
         }
-        gc.setLayout(-1)
+        gc.setLayout(-2)
         e.stopPropagation()
     }
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {

@@ -78,6 +78,22 @@ const defaultLayouts: Layout[] = [
       child2: { vertical: true, percent: 50 }
     }
   },
+  {
+    id: 6,
+    name: "Nine",
+    layout: {
+      vertical: false, percent: 67, 
+      child1: {
+        vertical: false, percent: 50,
+        child1: { vertical: true, percent: 67, 
+          child1: { vertical: true, percent: 50 }},
+        child2: { vertical: true, percent: 67,
+          child1: { vertical: true, percent: 50 }},
+      },
+      child2: { vertical: true, percent: 67,
+        child1: { vertical: true, percent: 50 }},
+    }
+  },
 ]
 
 const globalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -91,13 +107,13 @@ export function GlobalProvider({
 }) {
   // Functions exposed by the context
   function setLayout(layoutId: number | null) {
-    if (layoutId === -1) {
-      setVersion(v => v + 1)
+    setVersion(v => v + 1)
+    if (layoutId === -2) { // user resized a chat window
+      storeLayoutsInLS(layouts)
       return
     }
     setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
-    setVersion(v => v + 1)
   }
   function deleteLayout(layoutId: number) {
     setStateLayout(prev => {
