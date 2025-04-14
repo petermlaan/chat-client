@@ -12,13 +12,12 @@ export default function Rooms({
     split: Split | undefined
 }) {
     function onRoomChange(roomId: number) {
-        cc.joinRoom(roomId)
-
         // Only save the room in the selected layout if its roomId > -1
         if (split && split?.roomId !== undefined && split?.roomId > -1) {
             split.roomId = roomId
-            gc.setLayout(-2)
+            gc.setLayout(-2) // save the layout
         }
+        cc.joinRoom(roomId)
     }
 
     const { isLoaded } = useUser()

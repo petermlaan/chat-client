@@ -107,11 +107,11 @@ export function GlobalProvider({
 }) {
   // Functions exposed by the context
   function setLayout(layoutId: number | null) {
-    setVersion(v => v + 1)
     if (layoutId === -2) { // user resized a chat window
       storeLayoutsInLS(layouts)
       return
     }
+    setVersion(v => v + 1) // Redraws the entire tree
     setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
   }

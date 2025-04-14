@@ -13,16 +13,24 @@ export default function Splitter({
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const rect = divRef.current?.getBoundingClientRect()
-        if (!dragover.current)
+        if (!dragover.current || !divRef.current)
             return // propagate event to the correct div
         if (rect && split && split.percent) {
             const res = (split.vertical ?
                 ((e.clientY - rect.top) / rect.height) :
                 ((e.clientX - rect.left) / rect.width))
-            const newPercent = Math.min(95, Math.max(5, Math.floor(res * 1000)/10))
+            const newPercent = Math.min(95, Math.max(5, Math.floor(res * 1000) / 10))
             split.percent = newPercent
+            if (split.vertical)
+                divRef.current.style.setProperty(
+                    "grid-template-rows",
+                    `${newPercent}% 0.8% ${99.2 - newPercent}%`, "important")
+            else
+                divRef.current.style.setProperty(
+                    "grid-template-columns",
+                    `${newPercent}% 0.4% ${99.6 - newPercent}%`, "important")
         }
-        gc.setLayout(-2)
+        gc.setLayout(-2) // Save the layout
         e.stopPropagation()
     }
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {
