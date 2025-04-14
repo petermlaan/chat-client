@@ -44,12 +44,12 @@ const defaultLayouts: Layout[] = [
   {
     id: 0,
     name: "One",
-    layout: { roomId: 1 }
+    layout: { roomId: 0 }
   },
   {
     id: 1,
     name: "Two Horizontal",
-    layout: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }
+    layout: { vertical: false, percent: 50, child1: { roomId: 0 } }
   },
   {
     id: 2,
@@ -151,37 +151,37 @@ export function GlobalProvider({
   }
   function registerClient(onMessage: (msg: Msg) => void) {
     const newId = clients.current.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
-    clients.current.push({ clientId: newId, roomId: -1, onMessage })
+    clients.current.push({ clientId: newId, roomId: 0, onMessage })
     return newId
   }
   function unregisterClient(clientId: number) {
     const client = clients.current.find(c => c.clientId === clientId)
-    if (socket.current && client && client.roomId > -1)
+    if (socket.current && client && client.roomId)
       leaveRoom(client)
     clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
-    // roomId = -1 to only leave the current room. 
+    // Set roomId = 0 to only leave the current room. 
     const client = clients.current.find(c => c.clientId === clientId)
     if (!client)
       return
-    if (client.roomId === -1 && roomId === -1)
+    if (client.roomId === 0 && roomId === 0)
       return
     if (!socket.current) {
       console.log("GC joinRoom: NO SOCKET!", { clientId, roomId });
       return
     }
-    if (client.roomId > -1)
+    if (client.roomId)
       leaveRoom(client)
     client.roomId = roomId
-    if (roomId > -1)
+    if (roomId)
       socket.current.emit("join", createMsg(roomId, "", 2))
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
-    if (roomId < 0) {
-      console.log("GC sendMsg: room -1")
+    if (!roomId) {
+      console.log("GC sendMsg: room 0")
       return
     }
     if (!socket.current || !socket.current.connected) {
@@ -342,7 +342,8 @@ export function GlobalProvider({
     return client
   }
   function leaveRoom(client: Client) {
-    if (client.roomId > -1 && socket.current &&
+    // Send leave Msg to server if this is the only client in this room
+    if (client.roomId && socket.current &&
       clients.current.reduce((a, c) => a + +(c.roomId === client.roomId), 0) === 1)
       socket.current.emit("leave", createMsg(client.roomId, "", 2))
   }

@@ -7,20 +7,20 @@ import ChatRoomCont from "./chatroomcont"
 import { useGlobalContext } from "@/components/globalcontext"
 
 export default function Splitter({
-    layout,
+    split,
 }: {
-    layout: Split | undefined;
+    split: Split | undefined;
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const rect = divRef.current?.getBoundingClientRect()
         if (!dragover.current)
             return // propagate event to the correct div
-        if (rect && layout && layout.percent) {
-            const res = (layout.vertical ?
+        if (rect && split && split.percent) {
+            const res = (split.vertical ?
                 ((e.clientY - rect.top) / rect.height) :
                 ((e.clientX - rect.left) / rect.width))
-            const newPercent = Math.min(95, Math.max(5, res * 100))
-            layout.percent = newPercent
+            const newPercent = Math.min(95, Math.max(5, Math.floor(res * 1000)/10))
+            split.percent = newPercent
         }
         gc.setLayout(-2)
         e.stopPropagation()
@@ -39,23 +39,23 @@ export default function Splitter({
 
     return (
         <>
-            {layout?.percent ? (
+            {split?.percent ? (
                 <div
                     className={styles.cont}
                     style={
-                        layout.vertical
-                            ? { gridTemplateRows: `${layout.percent}% 0.8% ${99.2 - layout.percent}%` }
-                            : { gridTemplateColumns: `${layout.percent}% 0.4% ${99.6 - layout.percent}%` }
+                        split.vertical
+                            ? { gridTemplateRows: `${split.percent}% 0.8% ${99.2 - split.percent}%` }
+                            : { gridTemplateColumns: `${split.percent}% 0.4% ${99.6 - split.percent}%` }
                     }
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     ref={divRef}>
-                    <Splitter layout={layout.child1} />
-                    <Border vertical={layout.vertical} setDragover={setDragover} />
-                    <Splitter layout={layout.child2} />
+                    <Splitter split={split.child1} />
+                    <Border vertical={split.vertical} setDragover={setDragover} />
+                    <Splitter split={split.child2} />
                 </div>
             ) : (
-                <ChatRoomCont layout={layout} />
+                <ChatRoomCont layout={split} />
             )}
         </>
     );
