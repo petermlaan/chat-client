@@ -13,19 +13,20 @@ export default function Splitter({
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const rect = divRef.current?.getBoundingClientRect()
-        if (!dragover.current) 
+        if (!dragover.current)
             return // propagate event to the correct div
         if (rect && layout && layout.percent) {
-            // -45 due to e.clientY including the header height
-            const res = (layout.vertical ? ((e.clientY-45) / rect.height) : (e.clientX / rect.width)) * 100
-            const newPercent = Math.min(95, Math.max(5, res))
+            const res = (layout.vertical ?
+                ((e.clientY - rect.top) / rect.height) :
+                ((e.clientX - rect.left) / rect.width))
+            const newPercent = Math.min(95, Math.max(5, res * 100))
             layout.percent = newPercent
         }
         gc.setLayout(-2)
         e.stopPropagation()
     }
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {
-        if (dragover.current) 
+        if (dragover.current)
             e.preventDefault()
     }
     function setDragover(d: boolean) {
