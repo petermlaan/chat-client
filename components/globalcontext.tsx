@@ -44,32 +44,32 @@ const defaultLayouts: Layout[] = [
   {
     id: 0,
     name: "One",
-    layout: { roomId: 0 }
+    split: { roomId: 0 }
   },
   {
     id: 1,
     name: "Two Horizontal",
-    layout: { vertical: false, percent: 50, child1: { roomId: 0 } }
+    split: { vertical: false, percent: 50, child1: { roomId: 0 } }
   },
   {
     id: 2,
     name: "Two Vertical",
-    layout: { vertical: true, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } }
+    split: { vertical: true, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } }
   },
   {
     id: 3,
     name: "Three",
-    layout: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
+    split: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
   },
   {
     id: 4,
     name: "Four",
-    layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }, child2: { vertical: false, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } } }
+    split: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }, child2: { vertical: false, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } } }
   },
   {
     id: 5,
     name: "Six",
-    layout: {
+    split: {
       vertical: false, percent: 67, child1: {
         vertical: false, percent: 50,
         child1: { vertical: true, percent: 50 },
@@ -81,7 +81,7 @@ const defaultLayouts: Layout[] = [
   {
     id: 6,
     name: "Nine",
-    layout: {
+    split: {
       vertical: false, percent: 67, 
       child1: {
         vertical: false, percent: 50,
@@ -133,7 +133,7 @@ export function GlobalProvider({
     const newLayout: Layout = {
       id: layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
       name,
-      layout: JSON.parse(layout),
+      split: JSON.parse(layout),
     }
     setLayouts(prev => {
       const newList = [...prev, newLayout]

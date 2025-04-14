@@ -55,7 +55,7 @@ export default function Splitter({
                     <Splitter split={split.child2} />
                 </div>
             ) : (
-                <ChatRoomCont layout={split} />
+                <ChatRoomCont split={split} />
             )}
         </>
     );
