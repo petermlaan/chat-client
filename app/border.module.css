@@ -1,0 +1,16 @@
+.border {
+  background: var(--background)
+}
+
+.borderh {
+  cursor: col-resize;
+}
+
+.borderv {
+  cursor: row-resize;
+}
+
+.border.dragging {
+  cursor: grabbing;
+  background: yellow;
+}

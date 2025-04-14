@@ -1,25 +1,22 @@
 "use client"
-import { KeyboardEvent, MouseEvent as ReactMouseEvent } from "react"
+import { KeyboardEvent, MouseEvent as ReactMouseEvent, useRef } from "react"
 import styles from "./chatroom.module.css"
 import { useChatContext } from "../components/chatcontext"
-import { queryClosest } from "@/lib/util"
 import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
+import { Split } from "@/lib/interfaces"
 
 export default function ChatRoom({
-    roomId
+    layout
 }: {
-    roomId: number
+    layout: Split | undefined
 }) {
-    function onBtnSend(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = queryClosest(".msgtxt", e.currentTarget)
-        sendMsg(node)
+    function onBtnSend() {
+        sendMsg()
     }
     function onKeyDown(e: KeyboardEvent<HTMLInputElement>) {
-        if (e.key === 'Enter') {
-            const node = queryClosest(".msgtxt", e.currentTarget)
-            sendMsg(node)
-        }
+        if (e.key === 'Enter')
+            sendMsg()
     }
     function onBtnSpam() {
         if (cc.isSpamming)
@@ -27,25 +24,23 @@ export default function ChatRoom({
         else
             cc.startSpam()
     }
-    function sendMsg(inputEl: Element | null | undefined) {
-        const input = inputEl as HTMLInputElement
-        if (input) {
-            const msg = input.value.trim()
-            if (msg) {
-                cc.sendMsg(msg)
-                input.value = ""
-            }
+    function sendMsg() {
+        const msg = msgtxtRef.current?.value?.trim()
+        if (msg) {
+            cc.sendMsg(msg)
+            msgtxtRef.current!.value = ""
         }
     }
     function onUserClick(e: ReactMouseEvent<HTMLButtonElement, MouseEvent>) {
-        const node = queryClosest(".msgtxt", e.currentTarget)
-        const input = node as HTMLInputElement
-        input.value = "@" + e.currentTarget.innerText + " " + input.value
-        input.focus()
+        if (msgtxtRef.current) {
+            msgtxtRef.current.value = "@" + e.currentTarget.innerText + " " + msgtxtRef.current.value
+            msgtxtRef.current.focus()
+        }
     }
 
     const cc = useChatContext()
     const gc = useGlobalContext()
+    const msgtxtRef = useRef<HTMLInputElement | null>(null)
 
     return (
         <section className={styles.chatroom}>
@@ -73,7 +68,7 @@ export default function ChatRoom({
                 }
             </div>
             <div className={styles.ctrl}>
-                <Rooms roomId={roomId} />
+                <Rooms layout={layout} />
                 <button onClick={onBtnSpam} className="imgbtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
                         viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}
@@ -83,7 +78,7 @@ export default function ChatRoom({
                     </svg>
                 </button>
                 <div className="flexcentgrow">
-                    <input type="text" onKeyDown={onKeyDown} className="msgtxt" />
+                    <input ref={msgtxtRef} type="text" onKeyDown={onKeyDown} className="msgtxt" />
                     <button onClick={onBtnSend} className="imgbtn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24" fill="none" stroke="var(--foreground)" strokeWidth="2"

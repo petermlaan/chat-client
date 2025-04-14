@@ -1,14 +1,15 @@
+import { Split } from "@/lib/interfaces";
 import { ChatProvider } from "../components/chatcontext";
 import ChatRoom from "./chatroom";
 
 export default function ChatRoomCont({
-  roomId
+  layout
 }: {
-  roomId: number
+  layout: Split | undefined
 }) {
   return (
     <ChatProvider>
-      <ChatRoom roomId={roomId} />
+      <ChatRoom layout={layout} />
     </ChatProvider>
   )
 }

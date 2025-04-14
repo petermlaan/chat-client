@@ -78,6 +78,22 @@ const defaultLayouts: Layout[] = [
       child2: { vertical: true, percent: 50 }
     }
   },
+  {
+    id: 6,
+    name: "Nine",
+    layout: {
+      vertical: false, percent: 67, 
+      child1: {
+        vertical: false, percent: 50,
+        child1: { vertical: true, percent: 67, 
+          child1: { vertical: true, percent: 50 }},
+        child2: { vertical: true, percent: 67,
+          child1: { vertical: true, percent: 50 }},
+      },
+      child2: { vertical: true, percent: 67,
+        child1: { vertical: true, percent: 50 }},
+    }
+  },
 ]
 
 const globalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -89,11 +105,15 @@ export function GlobalProvider({
   chatRooms: ChatRoom[]
   children: React.ReactNode
 }) {
-  // Functions exposed on the context
+  // Functions exposed by the context
   function setLayout(layoutId: number | null) {
+    setVersion(v => v + 1)
+    if (layoutId === -2) { // user resized a chat window
+      storeLayoutsInLS(layouts)
+      return
+    }
     setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
-    setVersion(v => v + 1)
   }
   function deleteLayout(layoutId: number) {
     setStateLayout(prev => {
@@ -144,10 +164,8 @@ export function GlobalProvider({
     // Leaves the current room (if any) and joins roomId. 
     // roomId = -1 to only leave the current room. 
     const client = clients.current.find(c => c.clientId === clientId)
-    if (!client) {
-      console.log("Found no client with clientId: " + clientId)
+    if (!client)
       return
-    }
     if (client.roomId === -1 && roomId === -1)
       return
     if (!socket.current) {

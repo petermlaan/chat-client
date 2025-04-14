@@ -1,22 +1,62 @@
-import { Split } from "@/lib/interfaces"
+"use client"
 import styles from "./splitter.module.css"
+import { useRef } from "react"
+import Border from "./border"
+import { Split } from "@/lib/interfaces"
 import ChatRoomCont from "./chatroomcont"
+import { useGlobalContext } from "@/components/globalcontext"
 
-// Recursive component that splits the screen for all the ChatRooms.
 export default function Splitter({
-    layout
+    layout,
 }: {
-    layout: Split | undefined
+    layout: Split | undefined;
 }) {
-    return (<>
-        {layout?.percent ?
-            <div className={styles.cont}
-                style={layout.vertical ?
-                    { gridTemplateRows: layout.percent + "% " + (100 - layout.percent) + "%" } :
-                    { gridTemplateColumns: layout.percent + "% " + (100 - layout.percent) + "%" }}>
-                <Splitter layout={layout.child1} />
-                <Splitter layout={layout.child2} />
-            </div> :
-            <ChatRoomCont roomId={layout?.roomId ?? -1} />}
-    </>)
+    function onDrop(e: React.DragEvent<HTMLDivElement>) {
+        const rect = divRef.current?.getBoundingClientRect()
+        if (!dragover.current)
+            return // propagate event to the correct div
+        if (rect && layout && layout.percent) {
+            const res = (layout.vertical ?
+                ((e.clientY - rect.top) / rect.height) :
+                ((e.clientX - rect.left) / rect.width))
+            const newPercent = Math.min(95, Math.max(5, res * 100))
+            layout.percent = newPercent
+        }
+        gc.setLayout(-2)
+        e.stopPropagation()
+    }
+    function onDragOver(e: React.DragEvent<HTMLDivElement>) {
+        if (dragover.current)
+            e.preventDefault()
+    }
+    function setDragover(d: boolean) {
+        dragover.current = d
+    }
+
+    const gc = useGlobalContext()
+    const dragover = useRef(false)
+    const divRef = useRef<HTMLDivElement | null>(null)
+
+    return (
+        <>
+            {layout?.percent ? (
+                <div
+                    className={styles.cont}
+                    style={
+                        layout.vertical
+                            ? { gridTemplateRows: `${layout.percent}% 0.8% ${99.2 - layout.percent}%` }
+                            : { gridTemplateColumns: `${layout.percent}% 0.4% ${99.6 - layout.percent}%` }
+                    }
+                    onDrop={onDrop}
+                    onDragOver={onDragOver}
+                    ref={divRef}>
+                    <Splitter layout={layout.child1} />
+                    <Border vertical={layout.vertical} setDragover={setDragover} />
+                    <Splitter layout={layout.child2} />
+                </div>
+            ) : (
+                <ChatRoomCont layout={layout} />
+            )}
+        </>
+    );
 }
