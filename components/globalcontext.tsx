@@ -44,17 +44,17 @@ const defaultLayouts: Layout[] = [
   {
     id: 0,
     name: "One",
-    layout: { roomId: 0 }
+    layout: { roomId: 1 }
   },
   {
     id: 1,
     name: "Two Horizontal",
-    layout: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }
+    layout: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }
   },
   {
     id: 2,
     name: "Two Vertical",
-    layout: { vertical: true, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } }
+    layout: { vertical: true, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } }
   },
   {
     id: 3,
@@ -64,7 +64,7 @@ const defaultLayouts: Layout[] = [
   {
     id: 4,
     name: "Four",
-    layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }, child2: { vertical: false, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } } }
+    layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }, child2: { vertical: false, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } } }
   },
   {
     id: 5,
