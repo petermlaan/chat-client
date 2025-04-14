@@ -6,11 +6,11 @@ import { SyntheticEvent, useRef, useState } from "react"
 
 export default function LayoutPage() {
     function onSave() {
-        if (selLayout && nameRef.current) {
+        if (selLayout && nameRef.current?.value) {
             try {
                 let layout: Split | undefined = undefined
-                if (layoutRef.current?.textContent)
-                    layout = JSON.parse(layoutRef.current.textContent)
+                if (layoutRef.current?.value)
+                    layout = JSON.parse(layoutRef.current.value)
                 const updatedLayout: Layout = { ...selLayout, layout: layout, name: nameRef.current.value }
                 gc.saveLayout(updatedLayout)
             } catch (err) {
@@ -19,6 +19,7 @@ export default function LayoutPage() {
         }
     }
     function onSelect(e: SyntheticEvent<HTMLSelectElement, Event>) {
+        // User selected a layout in the select element
         const sel = gc.layouts.find(l => +e.currentTarget.value === l.id)
         render(sel ?? null)
         setSelLayout(sel ?? null)
