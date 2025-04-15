@@ -6,6 +6,7 @@ import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
 import { Split } from "@/lib/interfaces"
 import { DRAG_DATA_SPLITH, DRAG_DATA_SPLITV, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { calcPercentage } from "@/lib/util"
 
 export default function ChatRoom({
     split
@@ -40,9 +41,12 @@ export default function ChatRoom({
     }
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const dragData = e.dataTransfer.getData(DRAG_FORMAT_TEXT)
+        const rect = divRef.current?.getBoundingClientRect()
         if (dragData === DRAG_DATA_SPLITH || dragData === DRAG_DATA_SPLITV) {
             split.vertical = dragData === DRAG_DATA_SPLITV
             split.percent = 50
+            if (rect)
+                split.percent = calcPercentage(split.vertical!, rect, e.clientX, e.clientY)
             split.child1 = { roomId: split.roomId ?? 0 }
             split.child2 = { roomId: split.roomId ?? 0 }
             split.roomId = undefined

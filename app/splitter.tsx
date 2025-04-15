@@ -6,6 +6,7 @@ import { Split } from "@/lib/interfaces"
 import ChatRoomCont from "./chatroomcont"
 import { useGlobalContext } from "@/components/globalcontext"
 import { BORDER_HEIGHT_PERC, BORDER_WIDTH_PERC, DRAG_DATA_BORDER, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { calcPercentage } from "@/lib/util"
 
 export default function Splitter({
     split,
@@ -29,11 +30,7 @@ export default function Splitter({
                 split.vertical = undefined
                 gc.setLayout(-3) // Save the layout and redraw the splitter tree
             } else {
-                const res = (split.vertical ?
-                    ((e.clientY - rect.top) / rect.height) :
-                    ((e.clientX - rect.left) / rect.width))
-                const newPercent = Math.min(95, Math.max(5, Math.floor(res * 1000) / 10))
-                split.percent = newPercent
+                split.percent = calcPercentage(split.vertical!, rect, e.clientX, e.clientY)
                 if (split.vertical)
                     divRef.current.style.setProperty(
                         "grid-template-rows",
