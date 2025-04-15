@@ -1,0 +1,19 @@
+.borderx {
+  background: var(--foreground);
+  cursor: grab;
+}
+
+.borderh {
+  width: 20px;
+  height: 14px;
+}
+
+.borderv {
+  width: 20px;
+  height: 14px;
+}
+
+.borderx.dragging {
+  cursor: grabbing;
+  background: yellow;
+}

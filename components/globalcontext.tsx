@@ -49,7 +49,7 @@ const defaultLayouts: Layout[] = [
   {
     id: 1,
     name: "Two Horizontal",
-    split: { vertical: false, percent: 50, child1: { roomId: 0 } }
+    split: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } }
   },
   {
     id: 2,
@@ -59,7 +59,7 @@ const defaultLayouts: Layout[] = [
   {
     id: 3,
     name: "Three",
-    split: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
+    split: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } } }
   },
   {
     id: 4,
@@ -72,26 +72,35 @@ const defaultLayouts: Layout[] = [
     split: {
       vertical: false, percent: 67, child1: {
         vertical: false, percent: 50,
-        child1: { vertical: true, percent: 50 },
-        child2: { vertical: true, percent: 50 }
+        child1: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } },
+        child2: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } }
       },
-      child2: { vertical: true, percent: 50 }
+      child2: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } }
     }
   },
   {
     id: 6,
     name: "Nine",
     split: {
-      vertical: false, percent: 67, 
+      vertical: false, percent: 67,
       child1: {
         vertical: false, percent: 50,
-        child1: { vertical: true, percent: 67, 
-          child1: { vertical: true, percent: 50 }},
-        child2: { vertical: true, percent: 67,
-          child1: { vertical: true, percent: 50 }},
+        child1: {
+          vertical: true, percent: 67,
+          child1: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } },
+          child2: { roomId: 0 }
+        },
+        child2: {
+          vertical: true, percent: 67,
+          child1: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } },
+          child2: { roomId: 0 }
+        },
       },
-      child2: { vertical: true, percent: 67,
-        child1: { vertical: true, percent: 50 }},
+      child2: {
+        vertical: true, percent: 67,
+        child1: { vertical: true, percent: 50, child1: { roomId: 0 }, child2: { roomId: 0 } },
+        child2: { roomId: 0 }
+      },
     }
   },
 ]
@@ -111,7 +120,12 @@ export function GlobalProvider({
       storeLayoutsInLS(layouts)
       return
     }
-    setVersion(v => v + 1) // Redraws the entire tree
+    if (layoutId === -3) { // user split a chat window
+      storeLayoutsInLS(layouts)
+      setVersion(v => v + 1) // Redraws the entire splitter tree
+      return
+    }
+    setVersion(v => v + 1) // Redraws the entire splitter tree
     setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
   }
@@ -205,7 +219,7 @@ export function GlobalProvider({
     socket.current?.connect()
   }
   function setSettings(s: Partial<Settings>) {
-    const newSettings = {...settings, ...s}
+    const newSettings = { ...settings, ...s }
     setStateSettings(newSettings)
     if (localStorage) {
       localStorage.setItem(LS_SETTINGS, JSON.stringify(newSettings))

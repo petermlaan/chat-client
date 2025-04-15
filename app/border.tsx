@@ -1,3 +1,4 @@
+"use client"
 import styles from "./border.module.css"
 import { useState } from "react"
 
@@ -26,5 +27,5 @@ export default function Border({
             onDragStart={onDragStart} 
             onDragEnd={onDragEnd}>
         </div>
-    );
+    )
 }

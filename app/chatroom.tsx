@@ -9,7 +9,7 @@ import { Split } from "@/lib/interfaces"
 export default function ChatRoom({
     split
 }: {
-    split: Split | undefined
+    split: Split
 }) {
     function onBtnSend() {
         sendMsg()
@@ -37,13 +37,34 @@ export default function ChatRoom({
             msgtxtRef.current.focus()
         }
     }
+    function onDrop(e: React.DragEvent<HTMLDivElement>) {
+        console.log(e.ctrlKey, split, divRef.current)
+        const dragData = e.dataTransfer.getData("text/plain")
+        console.log(dragData)
+        if (dragData === "SplitH") {
+            split.vertical = true
+            split.percent = 50
+            split.child1 = { roomId: split.roomId ?? 0 }
+            split.child2 = { roomId: split.roomId ?? 0 }
+            split.roomId = undefined
+            console.log(split)
+            gc.setLayout(-3) // save layouts and redraw the splitter tree
+            e.stopPropagation()
+            return
+        }
+    }
+    function onDragOver(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+    }
 
     const cc = useChatContext()
     const gc = useGlobalContext()
     const msgtxtRef = useRef<HTMLInputElement | null>(null)
+    const divRef = useRef<HTMLDivElement | null>(null)
 
     return (
-        <section className={styles.chatroom}>
+        <section onDrop={onDrop} onDragOver={onDragOver}
+            ref={divRef} className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.roomId ?
                     cc.messages.map(m =>

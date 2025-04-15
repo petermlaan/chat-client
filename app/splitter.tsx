@@ -9,13 +9,19 @@ import { useGlobalContext } from "@/components/globalcontext"
 export default function Splitter({
     split,
 }: {
-    split: Split | undefined;
+    split: Split;
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
-        const rect = divRef.current?.getBoundingClientRect()
+        console.log(split, divRef.current)
+        const dragData = e.dataTransfer.getData("text/plain")
+        console.log(dragData)
+        if (dragData === "SplitH") {
+            return
+        }
         if (!dragover.current || !divRef.current)
             return // propagate event to the correct div
-        if (rect && split && split.percent) {
+        const rect = divRef.current.getBoundingClientRect()
+        if (rect && split.percent) {
             const res = (split.vertical ?
                 ((e.clientY - rect.top) / rect.height) :
                 ((e.clientX - rect.left) / rect.width))
@@ -34,20 +40,24 @@ export default function Splitter({
         e.stopPropagation()
     }
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {
-        if (dragover.current)
-            e.preventDefault()
+        e.preventDefault()
     }
     function setDragover(d: boolean) {
         dragover.current = d
     }
 
     const gc = useGlobalContext()
-    const dragover = useRef(false)
+    const dragover = useRef(true)
     const divRef = useRef<HTMLDivElement | null>(null)
+
+    if (split.percent && ((split.child1 === undefined) || (split.child2 === undefined))) {
+        console.log(split)
+        throw new Error("Children can't be undefined unless percent is undefined")
+    }
 
     return (
         <>
-            {split?.percent ? (
+            {split.percent ? (
                 <div
                     className={styles.cont}
                     style={
@@ -58,9 +68,9 @@ export default function Splitter({
                     onDrop={onDrop}
                     onDragOver={onDragOver}
                     ref={divRef}>
-                    <Splitter split={split.child1} />
+                    <Splitter split={split.child1!} />
                     <Border vertical={split.vertical} setDragover={setDragover} />
-                    <Splitter split={split.child2} />
+                    <Splitter split={split.child2!} />
                 </div>
             ) : (
                 <ChatRoomCont split={split} />
