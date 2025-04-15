@@ -5,7 +5,7 @@ import Border from "./border"
 import { Split } from "@/lib/interfaces"
 import ChatRoomCont from "./chatroomcont"
 import { useGlobalContext } from "@/components/globalcontext"
-import { BORDER_HEIGHT_PERC, BORDER_WIDTH_PERC, DRAG_DATA_BORDER, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { BORDER_HEIGHT_PERC, BORDER_WIDTH_PERC, DRAG_DATA_BORDERH, DRAG_DATA_BORDERV, DRAG_FORMAT_TEXT } from "@/lib/constants"
 import { calcPercentage } from "@/lib/util"
 
 export default function Splitter({
@@ -15,7 +15,7 @@ export default function Splitter({
 }) {
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const dragData = e.dataTransfer.getData(DRAG_FORMAT_TEXT)
-        if (dragData !== DRAG_DATA_BORDER)
+        if ((dragData !== DRAG_DATA_BORDERV && dragData !== DRAG_DATA_BORDERH) || e.ctrlKey)
             return
         if (!dragover.current || !divRef.current)
             return // propagate event to the correct Splitter

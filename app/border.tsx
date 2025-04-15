@@ -1,5 +1,5 @@
 "use client"
-import { DRAG_DATA_BORDER, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { DRAG_DATA_BORDERH, DRAG_DATA_BORDERV, DRAG_FORMAT_TEXT } from "@/lib/constants"
 import styles from "./border.module.css"
 import { DragEvent, useState } from "react"
 
@@ -11,7 +11,7 @@ export default function Border({
     setDragover: (dragover: boolean) => void,
 }) {
     function onDragStart(e: DragEvent<HTMLDivElement>) {
-        e.dataTransfer.setData(DRAG_FORMAT_TEXT, DRAG_DATA_BORDER)
+        e.dataTransfer.setData(DRAG_FORMAT_TEXT, vertical ? DRAG_DATA_BORDERV : DRAG_DATA_BORDERH)
         setDragging(true)
         setDragover(true)
     }
