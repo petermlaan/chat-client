@@ -55,20 +55,21 @@ export default function LayoutPage() {
         layoutNode.value = selLayout ? JSON.stringify(selLayout?.split) : ""
     }
     function validateSplit(split: Split): boolean {
-        if (split.vertical || split.percent || split.child1 || split.child2) {
+        if (split.vertical !== undefined || 
+            split.percent !== undefined || 
+            split.child1 || split.child2) {
             split.roomId = undefined
-            if (!split.vertical || !split.percent)
+            if (split.vertical === undefined || split.percent === undefined)
                 return false
             if (!split.child1)
-                split.child1 = { roomId: 0}
+                split.child1 = { roomId: 0 }
             if (!split.child2)
-                split.child2 = { roomId: 0}
+                split.child2 = { roomId: 0 }
             return validateSplit(split.child1) && validateSplit(split.child2)
-        } else {
-            if (!split.roomId)
-                split.roomId = 0
-            return true
         }
+        if (!split.roomId)
+            split.roomId = 0
+        return true
     }
 
     const gc = useGlobalContext()
