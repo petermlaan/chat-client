@@ -8,14 +8,16 @@ export default function LayoutPage() {
     function onSave() {
         if (selLayout && nameRef.current?.value && layoutRef.current) {
             try {
-                let layout: Split | undefined = undefined
+                let split: Split | undefined = undefined
                 if (layoutRef.current.value)
-                    layout = JSON.parse(layoutRef.current.value)
-                const updatedLayout: Layout = { ...selLayout, split: layout, name: nameRef.current.value }
+                    split = JSON.parse(layoutRef.current.value)
+                if (split && !validateSplit(split))
+                    window.alert("Failed to parse layout")
+                const updatedLayout: Layout = { ...selLayout, split: split, name: nameRef.current.value }
                 gc.saveLayout(updatedLayout)
-                layoutRef.current.value = JSON.stringify(layout)
+                layoutRef.current.value = JSON.stringify(split)
             } catch (err) {
-                window.alert("Failed to parse layout string: " + layoutRef.current?.textContent + " - Error: " + err)
+                window.alert("Failed to parse layout - Error: " + err)
             }
         }
     }
@@ -51,6 +53,22 @@ export default function LayoutPage() {
         nameNode.value = selLayout?.name ?? ""
         const layoutNode = document.querySelector("#layout") as HTMLTextAreaElement
         layoutNode.value = selLayout ? JSON.stringify(selLayout?.split) : ""
+    }
+    function validateSplit(split: Split): boolean {
+        if (split.vertical || split.percent || split.child1 || split.child2) {
+            split.roomId = undefined
+            if (!split.vertical || !split.percent)
+                return false
+            if (!split.child1)
+                split.child1 = { roomId: 0}
+            if (!split.child2)
+                split.child2 = { roomId: 0}
+            return validateSplit(split.child1) && validateSplit(split.child2)
+        } else {
+            if (!split.roomId)
+                split.roomId = 0
+            return true
+        }
     }
 
     const gc = useGlobalContext()
