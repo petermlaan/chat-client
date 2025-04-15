@@ -44,32 +44,32 @@ const defaultLayouts: Layout[] = [
   {
     id: 0,
     name: "One",
-    layout: { roomId: 0 }
+    split: { roomId: 0 }
   },
   {
     id: 1,
     name: "Two Horizontal",
-    layout: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }
+    split: { vertical: false, percent: 50, child1: { roomId: 0 } }
   },
   {
     id: 2,
     name: "Two Vertical",
-    layout: { vertical: true, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } }
+    split: { vertical: true, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } }
   },
   {
     id: 3,
     name: "Three",
-    layout: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
+    split: { vertical: false, percent: 50, child2: { vertical: true, percent: 50 } }
   },
   {
     id: 4,
     name: "Four",
-    layout: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 0 }, child2: { roomId: 1 } }, child2: { vertical: false, percent: 50, child1: { roomId: 2 }, child2: { roomId: 3 } } }
+    split: { vertical: true, percent: 50, child1: { vertical: false, percent: 50, child1: { roomId: 1 }, child2: { roomId: 2 } }, child2: { vertical: false, percent: 50, child1: { roomId: 3 }, child2: { roomId: 4 } } }
   },
   {
     id: 5,
     name: "Six",
-    layout: {
+    split: {
       vertical: false, percent: 67, child1: {
         vertical: false, percent: 50,
         child1: { vertical: true, percent: 50 },
@@ -81,7 +81,7 @@ const defaultLayouts: Layout[] = [
   {
     id: 6,
     name: "Nine",
-    layout: {
+    split: {
       vertical: false, percent: 67, 
       child1: {
         vertical: false, percent: 50,
@@ -107,11 +107,11 @@ export function GlobalProvider({
 }) {
   // Functions exposed by the context
   function setLayout(layoutId: number | null) {
-    setVersion(v => v + 1)
     if (layoutId === -2) { // user resized a chat window
       storeLayoutsInLS(layouts)
       return
     }
+    setVersion(v => v + 1) // Redraws the entire tree
     setStateLayout(layouts.find(l => l.id === layoutId) ?? null)
     storeSelLayoutInLS(layoutId)
   }
@@ -133,7 +133,7 @@ export function GlobalProvider({
     const newLayout: Layout = {
       id: layouts.reduce((a, l) => a > l.id ? a : l.id + 1, 0),
       name,
-      layout: JSON.parse(layout),
+      split: JSON.parse(layout),
     }
     setLayouts(prev => {
       const newList = [...prev, newLayout]
@@ -151,37 +151,37 @@ export function GlobalProvider({
   }
   function registerClient(onMessage: (msg: Msg) => void) {
     const newId = clients.current.reduce((a, c) => c.clientId > a ? c.clientId : a, 0) + 1
-    clients.current.push({ clientId: newId, roomId: -1, onMessage })
+    clients.current.push({ clientId: newId, roomId: 0, onMessage })
     return newId
   }
   function unregisterClient(clientId: number) {
     const client = clients.current.find(c => c.clientId === clientId)
-    if (socket.current && client && client.roomId > -1)
+    if (socket.current && client && client.roomId)
       leaveRoom(client)
     clients.current = clients.current.filter(c => c.clientId !== clientId)
   }
   function joinRoom(clientId: number, roomId: number) {
     // Leaves the current room (if any) and joins roomId. 
-    // roomId = -1 to only leave the current room. 
+    // Set roomId = 0 to only leave the current room. 
     const client = clients.current.find(c => c.clientId === clientId)
     if (!client)
       return
-    if (client.roomId === -1 && roomId === -1)
+    if (client.roomId === 0 && roomId === 0)
       return
     if (!socket.current) {
       console.log("GC joinRoom: NO SOCKET!", { clientId, roomId });
       return
     }
-    if (client.roomId > -1)
+    if (client.roomId)
       leaveRoom(client)
     client.roomId = roomId
-    if (roomId > -1)
+    if (roomId)
       socket.current.emit("join", createMsg(roomId, "", 2))
   }
   function sendMsg(clientId: number, message: string) {
     const roomId = getClient(clientId).roomId
-    if (roomId < 0) {
-      console.log("GC sendMsg: room -1")
+    if (!roomId) {
+      console.log("GC sendMsg: room 0")
       return
     }
     if (!socket.current || !socket.current.connected) {
@@ -342,7 +342,8 @@ export function GlobalProvider({
     return client
   }
   function leaveRoom(client: Client) {
-    if (client.roomId > -1 && socket.current &&
+    // Send leave Msg to server if this is the only client in this room
+    if (client.roomId && socket.current &&
       clients.current.reduce((a, c) => a + +(c.roomId === client.roomId), 0) === 1)
       socket.current.emit("leave", createMsg(client.roomId, "", 2))
   }

@@ -7,9 +7,9 @@ import { useGlobalContext } from "@/components/globalcontext"
 import { Split } from "@/lib/interfaces"
 
 export default function ChatRoom({
-    layout
+    split
 }: {
-    layout: Split | undefined
+    split: Split | undefined
 }) {
     function onBtnSend() {
         sendMsg()
@@ -45,7 +45,7 @@ export default function ChatRoom({
     return (
         <section className={styles.chatroom}>
             <div className={styles.msgs}>
-                {cc.roomId > -1 ?
+                {cc.roomId ?
                     cc.messages.map(m =>
                         <div className={styles.msg + gc.settings.fontClass + gc.settings.fontSizeClass} key={m.id}>
                             {(m.type < 2) &&
@@ -68,7 +68,7 @@ export default function ChatRoom({
                 }
             </div>
             <div className={styles.ctrl}>
-                <Rooms layout={layout} />
+                <Rooms split={split} />
                 <button onClick={onBtnSpam} className="imgbtn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22"
                         viewBox="0 0 24 24" fill="none" stroke={cc.isSpamming ? "yellow" : "grey"}

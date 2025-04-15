@@ -113,7 +113,7 @@ export function ChatProvider({
 
     const [messages, setMessages] = useState<Msg[]>([])
     const [spamId, setSpamId] = useState(-1)
-    const [roomId, setRoomId] = useState(-1)
+    const [roomId, setRoomId] = useState(0)
     const clientIdRef = useRef(-1)
     const gc = useGlobalContext()
 

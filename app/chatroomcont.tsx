@@ -3,13 +3,13 @@ import { ChatProvider } from "../components/chatcontext";
 import ChatRoom from "./chatroom";
 
 export default function ChatRoomCont({
-  layout
+  split
 }: {
-  layout: Split | undefined
+  split: Split | undefined
 }) {
   return (
     <ChatProvider>
-      <ChatRoom layout={layout} />
+      <ChatRoom split={split} />
     </ChatProvider>
   )
 }

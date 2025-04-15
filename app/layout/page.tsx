@@ -6,13 +6,14 @@ import { SyntheticEvent, useRef, useState } from "react"
 
 export default function LayoutPage() {
     function onSave() {
-        if (selLayout && nameRef.current?.value) {
+        if (selLayout && nameRef.current?.value && layoutRef.current) {
             try {
                 let layout: Split | undefined = undefined
-                if (layoutRef.current?.value)
+                if (layoutRef.current.value)
                     layout = JSON.parse(layoutRef.current.value)
-                const updatedLayout: Layout = { ...selLayout, layout: layout, name: nameRef.current.value }
+                const updatedLayout: Layout = { ...selLayout, split: layout, name: nameRef.current.value }
                 gc.saveLayout(updatedLayout)
+                layoutRef.current.value = JSON.stringify(layout)
             } catch (err) {
                 window.alert("Failed to parse layout string: " + layoutRef.current?.textContent + " - Error: " + err)
             }
@@ -49,7 +50,7 @@ export default function LayoutPage() {
         const nameNode = document.querySelector("#name") as HTMLInputElement
         nameNode.value = selLayout?.name ?? ""
         const layoutNode = document.querySelector("#layout") as HTMLTextAreaElement
-        layoutNode.value = selLayout ? JSON.stringify(selLayout?.layout) : ""
+        layoutNode.value = selLayout ? JSON.stringify(selLayout?.split) : ""
     }
 
     const gc = useGlobalContext()

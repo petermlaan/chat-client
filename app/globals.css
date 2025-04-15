@@ -165,14 +165,14 @@ main {
 
 .banner {
   display: flex;
-  height: 3rem;
+  height: 2.6rem;
   align-items: center;
   border-bottom: 1px solid;
-  padding: 0.2rem;
+  padding: 0 0.2rem;
 }
 
 .logo {
-  top: 0.2rem;
+  top: 0;
   font-family: var(--font-luxurious-roman);
   font-size: xx-large;
 
