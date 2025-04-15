@@ -5,6 +5,7 @@ import { useChatContext } from "../components/chatcontext"
 import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
 import { Split } from "@/lib/interfaces"
+import { DRAGDATA_SPLITH, DRAGDATA_SPLITV, DRAGTYPE_TEXT } from "@/lib/constants"
 
 export default function ChatRoom({
     split
@@ -39,10 +40,9 @@ export default function ChatRoom({
     }
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         console.log(e.ctrlKey, split, divRef.current)
-        const dragData = e.dataTransfer.getData("text/plain")
-        console.log(dragData)
-        if (dragData === "SplitH") {
-            split.vertical = true
+        const dragData = e.dataTransfer.getData(DRAGTYPE_TEXT)
+        if (dragData === DRAGDATA_SPLITH || dragData === DRAGDATA_SPLITV) {
+            split.vertical = dragData === DRAGDATA_SPLITV
             split.percent = 50
             split.child1 = { roomId: split.roomId ?? 0 }
             split.child2 = { roomId: split.roomId ?? 0 }

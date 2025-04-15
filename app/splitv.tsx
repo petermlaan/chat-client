@@ -2,11 +2,11 @@
 import styles from "./splitx.module.css"
 import { DragEvent, useState } from "react"
 
-export default function SplitH({
+export default function SplitV({
 }: {
 }) {
     function onDragStart(e: DragEvent<HTMLDivElement>) {
-        e.dataTransfer.setData("text/plain", "SplitH")
+        e.dataTransfer.setData("text/plain", "SplitV")
         setDragging(true)
     }
     function onDragEnd() {
@@ -17,7 +17,7 @@ export default function SplitH({
 
     return (
         <div
-            className={`${styles.borderx} ${styles.borderh} ${dragging ? styles.dragging : ""}`}
+            className={`${styles.borderx} ${styles.borderv} ${dragging ? styles.dragging : ""}`}
             draggable 
             onDragStart={onDragStart} 
             onDragEnd={onDragEnd}>
