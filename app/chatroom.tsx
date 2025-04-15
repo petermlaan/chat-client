@@ -5,7 +5,7 @@ import { useChatContext } from "../components/chatcontext"
 import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
 import { Split } from "@/lib/interfaces"
-import { DRAG_DATA_SPLITH, DRAG_DATA_SPLITV, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { DRAG_DATA_BORDERH, DRAG_DATA_BORDERV, DRAG_DATA_SPLITH, DRAG_DATA_SPLITV, DRAG_FORMAT_TEXT } from "@/lib/constants"
 import { calcPercentage } from "@/lib/util"
 
 export default function ChatRoom({
@@ -42,8 +42,11 @@ export default function ChatRoom({
     function onDrop(e: React.DragEvent<HTMLDivElement>) {
         const dragData = e.dataTransfer.getData(DRAG_FORMAT_TEXT)
         const rect = divRef.current?.getBoundingClientRect()
-        if (dragData === DRAG_DATA_SPLITH || dragData === DRAG_DATA_SPLITV) {
-            split.vertical = dragData === DRAG_DATA_SPLITV
+        if ((dragData === DRAG_DATA_SPLITH || dragData === DRAG_DATA_SPLITV) ||
+            (e.ctrlKey && (dragData === DRAG_DATA_BORDERV || dragData === DRAG_DATA_BORDERH))) {
+            split.vertical = e.ctrlKey ?
+                (dragData === DRAG_DATA_BORDERV) :
+                (dragData === DRAG_DATA_SPLITV)
             split.percent = 50
             if (rect)
                 split.percent = calcPercentage(split.vertical!, rect, e.clientX, e.clientY)
@@ -52,7 +55,6 @@ export default function ChatRoom({
             split.roomId = undefined
             gc.setLayout(-3) // save layouts and redraw the splitter tree
             e.stopPropagation()
-            return
         }
     }
     function onDragOver(e: React.DragEvent<HTMLDivElement>) {

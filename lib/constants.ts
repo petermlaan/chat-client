@@ -8,7 +8,8 @@ export const LS_SETTINGS = LS_BASE + "settings"
 export const DRAG_FORMAT_TEXT = "text/plain"
 export const DRAG_DATA_SPLITV = "SplitV"
 export const DRAG_DATA_SPLITH = "SplitH"
-export const DRAG_DATA_BORDER = "Border"
+export const DRAG_DATA_BORDERV = "BorderV"
+export const DRAG_DATA_BORDERH = "BorderH"
 
 export const MAX_MESSAGES = 100
 
