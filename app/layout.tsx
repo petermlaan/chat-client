@@ -10,6 +10,8 @@ import Link from "next/link"
 import Connection from "./connection"
 import Fonts from "./fonts"
 import FontSize from "./fontsize"
+import SplitH from "./splith"
+import SplitV from "./splitv"
 
 const luxuriousRoman = Luxurious_Roman({
   weight: "400",
@@ -60,6 +62,8 @@ export default async function RootLayout({
                 <Link href="/" prefetch={false}><h1 className="logo">Chaticus Maximus</h1></Link>
                 <Navigation />
                 <div className="user">
+                  <SplitH />
+                  <SplitV />
                   <FontSize />
                   <Fonts />
                   <Connection />

@@ -6,6 +6,7 @@ export default function Page() {
     const gc = useGlobalContext()
 
     return (<main>
-        <Splitter split={gc.layout?.split} key={gc.version} />
+        {gc.layout?.split &&
+            <Splitter split={gc.layout?.split} key={gc.version} />}
     </main>)
 }

@@ -5,11 +5,13 @@ import { useChatContext } from "../components/chatcontext"
 import Rooms from "./rooms"
 import { useGlobalContext } from "@/components/globalcontext"
 import { Split } from "@/lib/interfaces"
+import { DRAG_DATA_SPLITH, DRAG_DATA_SPLITV, DRAG_FORMAT_TEXT } from "@/lib/constants"
+import { calcPercentage } from "@/lib/util"
 
 export default function ChatRoom({
     split
 }: {
-    split: Split | undefined
+    split: Split
 }) {
     function onBtnSend() {
         sendMsg()
@@ -37,13 +39,34 @@ export default function ChatRoom({
             msgtxtRef.current.focus()
         }
     }
+    function onDrop(e: React.DragEvent<HTMLDivElement>) {
+        const dragData = e.dataTransfer.getData(DRAG_FORMAT_TEXT)
+        const rect = divRef.current?.getBoundingClientRect()
+        if (dragData === DRAG_DATA_SPLITH || dragData === DRAG_DATA_SPLITV) {
+            split.vertical = dragData === DRAG_DATA_SPLITV
+            split.percent = 50
+            if (rect)
+                split.percent = calcPercentage(split.vertical!, rect, e.clientX, e.clientY)
+            split.child1 = { roomId: split.roomId ?? 0 }
+            split.child2 = { roomId: split.roomId ?? 0 }
+            split.roomId = undefined
+            gc.setLayout(-3) // save layouts and redraw the splitter tree
+            e.stopPropagation()
+            return
+        }
+    }
+    function onDragOver(e: React.DragEvent<HTMLDivElement>) {
+        e.preventDefault()
+    }
 
     const cc = useChatContext()
     const gc = useGlobalContext()
     const msgtxtRef = useRef<HTMLInputElement | null>(null)
+    const divRef = useRef<HTMLDivElement | null>(null)
 
     return (
-        <section className={styles.chatroom}>
+        <section onDrop={onDrop} onDragOver={onDragOver}
+            ref={divRef} className={styles.chatroom}>
             <div className={styles.msgs}>
                 {cc.roomId ?
                     cc.messages.map(m =>
