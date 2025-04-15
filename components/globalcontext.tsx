@@ -209,9 +209,7 @@ export function GlobalProvider({
       socket.current.emit("message", createMsg(roomId, message, 0))
   }
   function disconnect() {
-    console.log("disconnect: ", socket.current)
     if (socket.current && socket.current.connected) {
-      console.log("disconnecting...")
       socket.current.disconnect()
     }
   }
@@ -243,7 +241,6 @@ export function GlobalProvider({
   }
   function onPM(data: unknown) {
     const msgs = data as Msg[]
-    console.log("PM", msgs)
     let recipientFound = false
     msgs.forEach(msg => {
       clients.current.forEach(c => {
