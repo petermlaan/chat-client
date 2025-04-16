@@ -6,16 +6,18 @@ import { SyntheticEvent, useRef, useState } from "react"
 
 export default function LayoutPage() {
     function onSave() {
-        if (selLayout && nameRef.current?.value && layoutRef.current) {
+        if (selLayout && nameRef.current?.value && splitRef.current) {
             try {
                 let split: Split | undefined = undefined
-                if (layoutRef.current.value)
-                    split = JSON.parse(layoutRef.current.value)
-                if (split && !validateSplit(split))
+                if (splitRef.current.value)
+                    split = JSON.parse(splitRef.current.value)
+                if (split && !validateSplit(split)) {
                     window.alert("Failed to parse layout")
+                    return
+                }
                 const updatedLayout: Layout = { ...selLayout, split: split, name: nameRef.current.value }
                 gc.saveLayout(updatedLayout)
-                layoutRef.current.value = JSON.stringify(split)
+                splitRef.current.value = JSON.stringify(split)
             } catch (err) {
                 window.alert("Failed to parse layout - Error: " + err)
             }
@@ -28,8 +30,15 @@ export default function LayoutPage() {
         setSelLayout(sel ?? null)
     }
     function onCreate() {
-        if (nameRef.current && layoutRef.current) {
-            gc.createLayout(nameRef.current.value, layoutRef.current.value)
+        if (nameRef.current && splitRef.current) {
+            let split: Split | undefined = undefined
+            if (splitRef.current.value)
+                split = JSON.parse(splitRef.current.value)
+            if (split && !validateSplit(split)) {
+                window.alert("Failed to parse layout")
+                return
+            }
+            gc.createLayout(nameRef.current.value, splitRef.current.value)
             render(null)
         }
     }
@@ -55,8 +64,8 @@ export default function LayoutPage() {
         layoutNode.value = selLayout ? JSON.stringify(selLayout?.split) : ""
     }
     function validateSplit(split: Split): boolean {
-        if (split.vertical !== undefined || 
-            split.percent !== undefined || 
+        if (split.vertical !== undefined ||
+            split.percent !== undefined ||
             split.child1 || split.child2) {
             split.roomId = undefined
             if (split.vertical === undefined || split.percent === undefined)
@@ -75,7 +84,7 @@ export default function LayoutPage() {
     const gc = useGlobalContext()
     const [selLayout, setSelLayout] = useState<Layout | null>(null)
     const nameRef = useRef<HTMLInputElement | null>(null)
-    const layoutRef = useRef<HTMLTextAreaElement | null>(null)
+    const splitRef = useRef<HTMLTextAreaElement | null>(null)
     const layoutsRef = useRef<HTMLSelectElement | null>(null)
 
     return (
@@ -93,7 +102,7 @@ export default function LayoutPage() {
                 <span>Name:</span>
                 <input ref={nameRef} type="text" id="name" />
             </div>
-            <textarea ref={layoutRef} id="layout" />
+            <textarea ref={splitRef} id="layout" />
             <div className="flexcentwrap">
                 <button onClick={onSave}>Save</button>
                 <button onClick={onCreate}>Create</button>
