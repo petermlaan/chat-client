@@ -9,11 +9,16 @@ export interface Msg {
 }
 
 export interface Split {
+    // A binary tree that divides the screen into one or more chat windows
+
+    // Node parts
     percent?: number,
     vertical?: boolean
-    roomId?: number,
     child1?: Split,
-    child2?: Split
+    child2?: Split,
+
+    // Leaf parts
+    roomId?: number,
 }
 
 export interface Layout {
