@@ -90,19 +90,22 @@ export default function LayoutPage() {
     return (
         <div className={styles.page}>
             <h2>Layout Editor</h2>
-            <div className="flexcent">
-                <select ref={layoutsRef} onChange={onSelect} id="layouts">
-                    <option>Layouts...</option>
-                    {gc.layouts.map((l, i) =>
-                        <option value={l.id} key={i}>{l.name}</option>
-                    )}
-                </select>
+            <div className={styles.grid1}>
+                <div className="flexcent">
+                    <span>Layout:</span>
+                    <select ref={layoutsRef} onChange={onSelect} id="layouts">
+                        <option>Layouts...</option>
+                        {gc.layouts.map((l, i) =>
+                            <option value={l.id} key={i}>{l.name}</option>
+                        )}
+                    </select>
+                </div>
+                <div className="flexcent">
+                    <span>Name:</span>
+                    <input ref={nameRef} type="text" id="name" />
+                </div>
             </div>
-            <div className="flexcent">
-                <span>Name:</span>
-                <input ref={nameRef} type="text" id="name" />
-            </div>
-            <textarea ref={splitRef} id="layout" />
+            <textarea ref={splitRef} id="layout" className={styles.split} />
             <div className="flexcentwrap">
                 <button onClick={onSave}>Save</button>
                 <button onClick={onCreate}>Create</button>
