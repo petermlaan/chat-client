@@ -1,6 +1,6 @@
-#Chaticus Maximus
+# Chaticus Maximus
 
-##A web chat client. Use chat-server repo for the server.
+## A web chat client. Use chat-server repo for the server.
 
 Uses Next.js, socket.io, Supabase and Clerk. 
 
