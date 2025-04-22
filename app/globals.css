@@ -161,7 +161,6 @@ main {
   display: flex;
   height: 2.6rem;
   align-items: center;
-  border-bottom: 1px solid;
   padding: 0 0.2rem;
 }
 
